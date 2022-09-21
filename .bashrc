@@ -1,1 +1,1 @@
-bin/bashrc-common
+../bin/bashrc-common
