@@ -1,0 +1,12 @@
+# my-home/bashrc_gnrld
+# Symlink to ~/.bashrc
+
+[[ -f ~/bin/bashrc-common ]] && {
+    source ~/bin/bashrc-common
+}
+
+
+[[ -n $PS1 && -f ${HOME}/.local/bin/bbproxy-setup/bbproxy-setup.bashrc ]] && source ${HOME}/.local/bin/bbproxy-setup/bbproxy-setup.bashrc # Added by bbproxy-setup-setup.sh
+
+source ~/.bbproxy-env # Added by bbproxy-setup.sh
+source ~/.bbproxy-env # Added by bbproxy-setup.sh

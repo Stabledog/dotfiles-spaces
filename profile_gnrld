@@ -1,0 +1,40 @@
+if [ "$SUPPRESS_PROXY_INIT" != 1 ]; then
+    . ~/.bbproxy-env && echo "~/.bbproxy-env loaded" >&2
+fi
+echo "$(readlink -f ~/.profile) loading as ~/.profile" >&2
+
+shell_pick() {
+    unalias bash >/dev/null 2>&1
+    bashpath=
+    for cand in linux sun ibm; do
+        shpath=$HOME/mylibs/${cand}/bin/bash
+        [[ -x $shpath ]] || continue
+        (
+            ${shpath} -c true >/dev/null 2>&1
+        ) >/dev/null 2>&1 && {
+            bashpath=${shpath}
+            break
+        }
+    done
+    if [ "$bashpath" = "" ]; then
+        return
+    fi
+    # Create a wrapper function for bash:
+    eval 'bash() { SHELL=${bashpath} ${bashpath} "$@"; }'
+    PATH=${bashpath}:$PATH
+    echo "bash is now $bashpath" >&2
+}
+
+if [ "$SHELL" != *bash ]; then
+    shell_pick
+fi
+
+export VIMHOME=${HOME}/.vim
+[[ "$PATH" == "$HOME/.local/bin" ]] || {
+    PATH="$HOME/.local/bin:$PATH"
+}
+
+[[ "$SHELL" == *bash ]] && {
+    . ~/.bashrc
+}
+
