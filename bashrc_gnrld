@@ -9,4 +9,5 @@
 [[ -n $PS1 && -f ${HOME}/.local/bin/bbproxy-setup/bbproxy-setup.bashrc ]] && source ${HOME}/.local/bin/bbproxy-setup/bbproxy-setup.bashrc # Added by bbproxy-setup-setup.sh
 
 source ~/.bbproxy-env # Added by bbproxy-setup.sh
-source ~/.bbproxy-env # Added by bbproxy-setup.sh
+
+source ~/dotfiles/mystuff
