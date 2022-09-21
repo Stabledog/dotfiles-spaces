@@ -1,6 +1,11 @@
 #!/bin/bash
 
 cd ~
-#ln -s dotfiles/.bashrc .bashrc
-#ln -s dotfiles/.profile .profile
+
+
+[[ -z $sourceMe ]] && {
+    for file in $(cat dotfiles/my-dotfiles); do
+        ln -s dotfiles/${file} ./${file}
+    done
+}
 
