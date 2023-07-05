@@ -1,9 +1,16 @@
 #!/bin/bash
 # spaces-setup.sh for dotfiles-spaces
 
+initPrimary() {
 
-curl http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash -
+    # Identify the "spaces primary repo":
+    mapfile primaryCandidates < <(cd /; git ls -d /.git)
+}
 
-${HOME}/.local/bin/shpm install vbase
+if [[ -z "$sourceMe" ]]; then
+    curl http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash -
 
+    ${HOME}/.local/bin/shpm install vbase
+    ${HOME}/.local/bin/vi-mode.sh on
+fi
 
