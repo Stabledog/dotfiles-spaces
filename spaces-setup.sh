@@ -1,3 +1,9 @@
 #!/bin/bash
+# spaces-setup.sh for dotfiles-spaces
 
-echo "spaces-setup: $(date)" >&2
+
+curl http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash -
+
+${HOME}/.local/bin/shpm install vbase makeup
+
+
