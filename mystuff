@@ -1,7 +1,0 @@
-# mystuff is sourced from .bashrc
-
-yes_my_stuff() {
-    echo "Yes, this is my stuff"
-}
-
-alias myfoo='echo myfoo is here'
