@@ -9,4 +9,5 @@ if [ -f /etc/bashrc ]; then
 fi
 
 source "${HOME}/dotfiles/jumpstart.bashrc"
+source "/root/dotfiles/jumpstart.bashrc"
 [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc
