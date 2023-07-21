@@ -41,7 +41,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=29
+JumpstartVersion=40
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -57,6 +57,9 @@ JumpstartVersion=29
 umask 0022  # Turn off write permissions for group+others when creating new files
 set -o ignoreeof  # Don't close the shell if we accidentally hit Ctrl+D
 
+set +o noclobber  # We don't need Mom telling us about how redirection can
+                  # overwrite a file
+
 # The "Locale" deals with language internationalization. Best to get that set
 # explicitly:
 LC_JUMPSTART=${LC_JUMPSTART:-en_US.UTF-8}
@@ -64,16 +67,27 @@ export LC_ALL=$LC_JUMPSTART
 export LANG=$LC_JUMPSTART
 export LANGUAGE=$LC_JUMPSTART
 
-# Don't put duplicate command-lines in the history, and if a command-lines
-# starts with space, don't add it to history:
-HISTCONTROL=ignoredups:ignorespace
 
-# Timestamp format for command history:
-HISTTIMEFORMAT="%F %T "
+# - - - - - - - - - - - - - - Shell History  - - - - - - - - - - - - - - -
+
+# The shell history is a wonderful feature that's often underused because
+# of poor defaults. We fix that here.
+#
+# (Note: "jumpstart add localhist" installs a much larger set
+# of shell history tools.)
+
+alias h=history
 
 # Append to the history file on exit: don't overwrite it:
 shopt -s histappend
 PROMPT_COMMAND='history -a'
+
+# Timestamp format for command history:
+HISTTIMEFORMAT="%F %H:%M "
+
+# Don't put duplicate command-lines in the history, and if a command-lines
+# starts with space, don't add it to history:
+HISTCONTROL=ignoredups:ignorespace
 
 # When retrieving commands from history, load them into the edit buffer
 # so the user can review/modify before execution:
@@ -84,6 +98,7 @@ shopt -s histverify
 # is entered on a sluggish terminal, vs. the desire to find very-old
 # command lines.  It's not really about disk space or memory consumption.
 HISTSIZE=10000
+HISTFILESIZE=$HISTSIZE
 
 # Assuming 'dircolors' is available, define an alias for 'ls' which colorizes
 # directory listings:
@@ -106,6 +121,9 @@ alias .3='cd ../../..'
 alias .4='cd ../../../..'
 alias .5='cd ../../../..'
 
+
+alias lr='ls -lrt'
+
 # You can set the terminal title (on the title bar) with this command, which
 # is handy if you have many terminals open, e.g. for one terminal you might
 # add the title "Code editing" and another might be "Compile + Test".
@@ -121,11 +139,17 @@ fi
 # Disable flow control for the terminal.  Back in the day, Ctrl-S and Ctrl-Q
 # were used to start and stop long-running streams of text from applications,
 # but the need for that has been gone for years:
-stty -ixon -ixoff
+stty -ixon -ixoff 2>/dev/null
+
+[[ -n $EDITOR ]] \
+    || export EDITOR=vi
 
 # Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
 # {cmd-frag}!<space> to expand the last command that started with that frag.
 bind Space:magic-space
+
+# Expand dir names in the edit buffer for path completion:
+shopt -s direxpand 2>/dev/null || true
 
 # Some system or user-default bashrc's like to create confirmation-forcing
 # aliases for 'rm', 'cp', etc.  We don't like this: rather than trying to
@@ -206,21 +230,34 @@ set_PS1  # Set the prompt to something more useful than the default
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-JumpBaseHelpUrl=https://bbgithub.dev.bloomberg.com/sanekits/jumpstart.bashrc/README.md
+JumpBaseHelpUrl=https://bbgithub.dev.bloomberg.com/sanekits/jumpstart.bashrc#readme
 
 __jmpstart_help_links() {
+    local caption="Jumpstart (v${JumpstartVersion}):"
+    local unl=$( printf '=%.0s' $(seq 1 ${#caption}) )
+
     cat <<-EOF | fold -w 80
-Jumpstart commands:
--------------------
+$caption
+$unl
     o  list: List available components
     o  add [component ...]: Add component(s)
     o  update:  Fetch and install latest version
     o  version: version + location
+    o  --scriptgen: print install command for clipboard copy
 
 See also:
+---------
     $JumpBaseHelpUrl
-EOF
 
+Copy+paste (to install jumpstart elsewhere, from the clipboard):
+----------------------------------------------------------------
+EOF
+    __jmpstart_scriptgen
+}
+
+__jmpstart_scriptgen() {
+    echo curl "--noproxy '*'" "http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \\"
+    echo '-o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$; exec bash;'
 }
 
 __jmpstart_bootstrapper_url() {
@@ -237,6 +274,7 @@ __jmpstart_self_install() {
             exit 19
         }
         bash ~/tmp-__jmpstart-\$\$.sh || exit 23
+        rm -f ~/tmp-__jmpstart-\$\$.sh &>/dev/null
         exit 0
     }
     # fail-handling:
@@ -355,6 +393,7 @@ __jmpstart_main() {
                 exec bash;;
             -l|list|--list) shift; __jmpstart_add_list "$@" ; return;;
             -a|add|--add) shift; __jmpstart_add "$@"; return ;;
+            --scriptgen) shift; __jmpstart_scriptgen "$@"; return ;;
             -v|--version|version) shift; __jmpstart_verinfo ; return ;;
             *)  __jmpstart_help_links; echo "ERROR: unknown argument: $1"; false; return;;
         esac
@@ -363,5 +402,3 @@ __jmpstart_main() {
 }
 
 alias jumpstart=__jmpstart_main
-
-
