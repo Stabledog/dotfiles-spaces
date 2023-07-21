@@ -17,9 +17,9 @@ source "/root/dotfiles/jumpstart.bashrc"
     [[ -f ${HOME}/dotfiles/setup.sh ]] && [[ ! -f ${HOME}/.dotfiles-init.flag ]] && {
         echo "I found ~/dotfiles/setup.sh.  Run it now? [y/N]" >&2
         read -n 1
+        touch ${HOME}/.dotfiles-init.flag
         [[ "$REPLY" =~ [yY] ]] && {
-            touch ${HOME}/.dotfiles-init.flag
-            ${HOME}/dotfiles/setup.sh
+            ${HOME}/dotfiles/setup.sh && exec bash
         }
     }
 }
