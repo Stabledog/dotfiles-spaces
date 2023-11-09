@@ -74,7 +74,8 @@ $(Flag)/vsweb-settings:
 	} || {
 		mkdir tmp-$$$$
 		git clone https://github.com/Stabledog/vscode.settings.git tmp-$$$$
-		mv tmp-$$$$/.git ./
+		mv tmp-$$$$/.git ./ && rm -rf tmp-$$$$
+		git checkout devx-spaces
 		cd snippets || { mkdir snippets && cd snippets ; }
 		git clone https://github.com/Stabledog/vscode.snippets.git ./
 	}
