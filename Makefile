@@ -20,15 +20,23 @@ jumpstart: $(Flag)/jumpstart
 vbase: $(Flag)/vbase
 makestuff: $(Flag)/makestuff
 vscodevim: $(Flag)/vscodevim
+spaceup: $(Flag)/spaceup
 
 $(Flag)/jumpstart:
 	@set -ue
 	curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \
-		-o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$
+		-o ~/jumpstart-$$UID-$$$$ && bash ~/jumpstart-$$UID-$$$$ && rm -f ~/jumpstart-$$UID-$$$$
 
 $(Flag)/vscodevim:
 	@set -ue
 	$(Code) --install-extension vscodevim.vim
+
+$(Flag)/spaceup:
+	@set -ue # Spaces-specific helpers
+	set -x
+	bash -lic '[[ -n "$$SPACEUP" ]]' && { touch $@; exit 0; } || {
+		echo 'source $${HOME}/dotfiles/dot/spaceup.bashrc # Added by dotfiles/Makefile:spaceup' >> $(HOME)/.bashrc
+	}
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
