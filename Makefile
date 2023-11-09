@@ -26,16 +26,19 @@ $(Flag)/jumpstart:
 	@set -ue
 	curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \
 		-o ~/jumpstart-$$UID-$$$$ && bash ~/jumpstart-$$UID-$$$$ && rm -f ~/jumpstart-$$UID-$$$$
+	touch $@
 
 $(Flag)/vscodevim:
 	@set -ue
 	$(Code) --install-extension vscodevim.vim
+	touch $@
 
 $(Flag)/spaceup:
 	@set -ue # Spaces-specific helpers
 	bash -lic '[[ -n "$$SPACEUP" ]]' && { touch $@; exit 1; } || {
 		echo 'source $${HOME}/dotfiles/dot/spaceup.bashrc # Added by dotfiles/Makefile:spaceup' >> $(HOME)/.bashrc
 	}
+	touch $@
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
