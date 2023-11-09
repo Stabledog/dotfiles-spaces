@@ -6,6 +6,8 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
+Code = $(shell which code code-server 2>/dev/null | head -n 1)
+
 Flag := $(HOME)/.flag-dotfiles
 
 $(Flag)/.init:
@@ -15,12 +17,16 @@ $(Flag)/.init:
 jumpstart: $(Flag)/jumpstart
 vbase: $(Flag)/vbase
 makestuff: $(Flag)/makestuff
+vscodevim: $(Flag)/vscodevim
 
 $(Flag)/jumpstart:
 	@set -ue
 	curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \
 		-o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$
 
+$(Flag)/vscodevim:
+	@set -ue
+	$(Code) --install-extension vscodevim.vim
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
