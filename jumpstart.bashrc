@@ -41,7 +41,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=40
+JumpstartVersion=54
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -113,16 +113,6 @@ shopt -s checkwinsize
 alias ll='ls --color=auto -l'   # The -l is "long format" in file listings
 alias lr='ls --color=auto -lrt' # Sort by reverse timestamp, long format
 
-# You can change to parent director(ies) with "cd ../../..", but typing
-# all of those dots is exactly the sort of meaningless work that you hate:
-alias .1='cd ..'
-alias .2='cd ../..'
-alias .3='cd ../../..'
-alias .4='cd ../../../..'
-alias .5='cd ../../../..'
-
-
-alias lr='ls -lrt'
 
 # You can set the terminal title (on the title bar) with this command, which
 # is handy if you have many terminals open, e.g. for one terminal you might
@@ -202,21 +192,36 @@ function parse_git_branch() {
     [[ -n $branch ]] && echo " [${branch}]"
 }
 
+# The built-in PS1 variable defines the format of the user's shell
+# prompt. This version displays:
+#   - date/time (\D{})
+#   - current directory (\w)
+#   - current git branch (parse_git_branch)
+#   - user name (\u)
+#   - host machine (\h)
+# See also: `man bash`.
 function set_PS1 {
-    # The built-in PS1 variable defines the format of the user's shell
-    # prompt. This version displays:
-    #   - date/time (\D{})
-    #   - current directory (\w)
-    #   - current git branch (parse_git_branch)
-    #   - user name (\u)
-    #   - host machine (\h)
-    # See also: `man bash`.
-    PS1='
+    [ $? -eq 0 ] && local prevResult=true || prevResult=false
+    local prevResultInd
+    if $prevResult; then
+        prevResultInd=$(printf "\[\033[01;32m\]""\xE2\x9C\x93""\[\033[;0m\]")
+    else
+        prevResultInd=$(printf "\[\033[01;31m\]""\xE2\x9C\x95""\[\033[;0m\]")
+    fi
+    PROMPT_DIRTRIM=3
+    PS1="
 \[\e[1;33m\]\D{%b-%d %H:%M:%S}\[\e[0m\] \[\e[1;35m\]\w\[\e[0m\]$(parse_git_branch)
-\[\e[1;36m\][\u $PS1_HOST_SUFFIX \h]\[\e[0m\]$Ps1Tail> '
+\[\e[1;36m\][\u $PS1_HOST_SUFFIX \h]\[\e[0m\]${Ps1Tail}${prevResultInd}> "
+    $prevResult;  # Important to reset the prevResult in case of chained prompt commands
 }
 
 set_PS1  # Set the prompt to something more useful than the default
+
+case "$PROMPT_COMMAND" in
+    set_PS1*) : ;;  # We already hooked in?
+    *) PROMPT_COMMAND="set_PS1;${PROMPT_COMMAND}"
+        #               ^^ Update PS1 before any other command can change result code.
+esac
 
 
 
@@ -243,7 +248,7 @@ $unl
     o  add [component ...]: Add component(s)
     o  update:  Fetch and install latest version
     o  version: version + location
-    o  --scriptgen: print install command for clipboard copy
+    o  -s, --scriptgen: print install command for clipboard copy
 
 See also:
 ---------
@@ -256,18 +261,18 @@ EOF
 }
 
 __jmpstart_scriptgen() {
-    echo curl "--noproxy '*'" "http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \\"
+    echo curl "-k" "--noproxy '*'" "https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \\"
     echo '-o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$; exec bash;'
 }
 
 __jmpstart_bootstrapper_url() {
-    echo 'http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh'
+    echo 'https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh'
 }
 
 __jmpstart_self_install() {
     cat <<-EOF
     which curl &>/dev/null && {
-        http_proxy= https_proxy= curl -s -L $(__jmpstart_bootstrapper_url) -o ~/tmp-__jmpstart-\$\$.sh
+        http_proxy= https_proxy= curl -k -s -L $(__jmpstart_bootstrapper_url) -o ~/tmp-__jmpstart-\$\$.sh
         [[ \$? -eq -0 ]] || {
             echo "ERROR: failed downloading $(__jmpstart_bootstrapper_url)" >&2
             echo "  (try pasting that URL into the browser?  Is the vpn connected?)" >&2
@@ -287,6 +292,7 @@ EOF
 __jmpstart_component_table() {
     cat <<-EOF
 href_1|bbproxy|https://bbgithub.dev.bloomberg.com/sanekits/bbproxy-setup|BB proxy setup|Detect and configure Bloomberg proxy settings for bash.|jumpstart add bbproxy|
+href_1|bashics|https://github.com/sanekits/bashics#installation|bashics|Basic shell init sanity|jumpstart add bashics|
 href_1|cdpp|https://github.com/sanekits/cdpp#installation|cd++|Smarter change-directory (replaces 'cd' builtin).|jumpstart add cdpp|
 href_1|localhist|https://github.com/sanekits/localhist#setup|localhist|Smart bash history with automatic cleanup/condense|jumpstart add localhist|
 href_1|gitsmart|https://github.com/sanekits/gitsmart#setup|gitsmart|Aliases, functions, and helpers for using git more efficiently|jumpstart add gitsmart|
@@ -300,12 +306,14 @@ __jmpstart_prequal_shpm() {
     PATH=$(bash -lc 'echo $PATH' 2>/dev/null)
     which shpm &>/dev/null \
         && return
-    echo "Component \"$1\" depends on bb-shellkit.  Would you like to add that first now?" >&2
-    read -n 1 -p "  Enter [y] to accept, anything else will cancel: "
-    case "$REPLY" in
-        y|Y|yes|YES) ;;
-        *) false; return ;;
-    esac
+    [[ -n "${JUMPSTART_FORCE_YES}" ]] || {
+        echo "Component \"$1\" depends on bb-shellkit.  Would you like to add that first now?" >&2
+        read -n 1 -p "  Enter [y] to accept, anything else will cancel: "
+        case "$REPLY" in
+            y|Y|yes|YES) ;;
+            *) false; return ;;
+        esac
+    }
     __jmpstart_add_single bbshellkit || { false; return; }
     source ~/.bashrc
     true
@@ -316,12 +324,16 @@ __jmpstart_add_single() {
     local kid="$1"
     case "$kid" in
         bbproxy)
-            curl --noproxy '*' http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/bbproxy-setup-setup-latest.sh -o ~/bbprox-$UID-$$ && bash ~/bbprox-$UID-$$ && rm -f ~/bbprox-$UID-$$ ;;
+            curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/bbproxy-setup-setup-latest.sh -o ~/bbprox-$UID-$$ && bash ~/bbprox-$UID-$$ && rm -f ~/bbprox-$UID-$$ ;;
         bbshellkit)
-            curl --noproxy '*' http://s3.dev.obdc.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash - ;;
+            curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash - ;;
         cdpp)
             __jmpstart_prequal_shpm "cd++" && {
                 bash -lc '~/.local/bin/shpm install cdpp';
+            };;
+        bashics)
+            __jmpstart_prequal_shpm "bashics" && {
+                bash -lc '~/.local/bin/shpm install bashics';
             };;
         localhist)
             __jmpstart_prequal_shpm "localhist" && {
@@ -393,7 +405,7 @@ __jmpstart_main() {
                 exec bash;;
             -l|list|--list) shift; __jmpstart_add_list "$@" ; return;;
             -a|add|--add) shift; __jmpstart_add "$@"; return ;;
-            --scriptgen) shift; __jmpstart_scriptgen "$@"; return ;;
+            --scriptgen|-s) shift; __jmpstart_scriptgen "$@"; return ;;
             -v|--version|version) shift; __jmpstart_verinfo ; return ;;
             *)  __jmpstart_help_links; echo "ERROR: unknown argument: $1"; false; return;;
         esac
@@ -402,3 +414,60 @@ __jmpstart_main() {
 }
 
 alias jumpstart=__jmpstart_main
+
+# cdx is an alternative to 'cd' which maintains a cache of recently used
+# directories, presenting them as a selectable list if the user provides no args.
+cdx ()
+{
+    [[ $# == 0 ]] && {
+        _cdselect
+        return
+    };
+    case "$@" in
+        -h|--help)
+            builtin help cd
+            echo "cdx: [dir]"
+            echo "  Present selection of cached dirs for dir change"
+            echo "  [dir]: change to dir and add it to cache"
+            return ;;
+    esac
+    _cdview -k | command grep -Eq "^${PWD}\$" || {
+        builtin pushd -n "$PWD" > /dev/null
+    }
+    builtin cd "$@" || return
+    _cdview -k | command grep -Eq "^${PWD}\$" || {
+        builtin pushd -n "$PWD" > /dev/null
+    }
+    true
+}
+
+[[ $(type -t _cd) == function ]] && {
+    complete -o nospace -F _cd cdx
+}
+
+_cdview() {
+    builtin printf "%s\n" "${DIRSTACK[@]}" | (
+        case $1 in
+            -u) cat | command sort -u ;;
+            -k) cat |  command tail -n +2 | command sort -u ;;
+            *) cat
+        esac
+    )
+}
+
+_cdselect() {
+    select xdir in $(_cdview -k); do
+        builtin cd "$xdir"
+        return
+    done
+}
+
+# You can change to parent director(ies) with "cd ../../..", but typing
+# all of those dots is exactly the sort of meaningless work that you hate:
+alias .1='builtin cd ..'
+alias .2='builtin pushd ../.. &>/dev/null'
+alias .3='builtin pushd ../../.. &>/dev/null'
+alias .4='builtin pushd ../../../.. &>/dev/null'
+alias .5='builtin pushd ../../../../.. &>/dev/null'
+alias .6='builtin pushd ../../../../../.. &>/dev/null'
+
