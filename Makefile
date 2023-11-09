@@ -8,6 +8,8 @@ absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 Code = $(shell which code code-server 2>/dev/null | head -n 1)
 
+VscodeUserDir = $(HOME)/.local/share/code-server/User
+
 Flag := $(HOME)/.flag-dotfiles
 
 none: $(Flag)/.init
@@ -21,6 +23,7 @@ vbase: $(Flag)/vbase
 makestuff: $(Flag)/makestuff
 vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
+vsweb-settings: $(Flag)/vsweb-settings
 
 $(Flag)/jumpstart:
 	@set -ue
@@ -59,6 +62,21 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 		bash -lic '[[ -n "$$BASH_COMPLETION_VERSINFO" ]]' || {
 			echo 'source /opt/bb/share/bash-completion/bash_completion # Added by dotfiles/Makefile:makestuff' >> $(HOME)/.bashrc
 		}
+	}
+	touch $@
+
+$(Flag)/vsweb-settings:
+	@set -ue # Clone user settings for working with the web edition
+	set -x
+	cd $(VscodeUserDir)
+	[[ -d .git ]] && {
+		git pull
+	} || {
+		mkdir tmp-$$$$
+		git clone https://github.com/Stabledog/vscode.settings.git tmp-$$$$
+		mv tmp-$$$$/.git ./
+		cd snippets || { mkdir snippets && cd snippets ; }
+		git clone https://github.com/Stabledog/vscode.snippets.git ./
 	}
 	touch $@
 
