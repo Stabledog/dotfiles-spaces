@@ -33,8 +33,7 @@ $(Flag)/vscodevim:
 
 $(Flag)/spaceup:
 	@set -ue # Spaces-specific helpers
-	set -x
-	bash -lic '[[ -n "$$SPACEUP" ]]' && { touch $@; exit 0; } || {
+	bash -lic '[[ -n "$$SPACEUP" ]]' && { touch $@; exit 1; } || {
 		echo 'source $${HOME}/dotfiles/dot/spaceup.bashrc # Added by dotfiles/Makefile:spaceup' >> $(HOME)/.bashrc
 	}
 
