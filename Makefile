@@ -10,6 +10,8 @@ Code = $(shell which code code-server 2>/dev/null | head -n 1)
 
 Flag := $(HOME)/.flag-dotfiles
 
+none: $(Flag)/.init
+
 $(Flag)/.init:
 	mkdir -p $(Flag)
 	touch $@
