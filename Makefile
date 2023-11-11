@@ -65,20 +65,22 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 	}
 	touch $@
 
-$(Flag)/vsweb-settings:
+$(VscodeUserDir)/.git/config:
 	@set -ue # Clone user settings for working with the web edition
 	set -x
 	cd $(VscodeUserDir)
-	[[ -d .git ]] && {
-		git pull
-	} || {
-		mkdir tmp-$$$$
-		git clone https://github.com/Stabledog/vscode.settings.git tmp-$$$$
-		mv tmp-$$$$/.git ./ && rm -rf tmp-$$$$
-		git checkout devx-spaces
-		cd snippets || { mkdir snippets && cd snippets ; }
-		git clone https://github.com/Stabledog/vscode.snippets.git ./
-	}
+	mkdir tmp-$$$$
+	git clone https://github.com/Stabledog/vscode.settings.git tmp-$$$$
+	mv tmp-$$$$/.git ./ && rm -rf tmp-$$$$
+	cd snippets || { mkdir snippets && cd snippets ; }
+	git clone https://github.com/Stabledog/vscode.snippets.git ./
+
+$(Flag)/vsweb-settings: $(VscodeUserDir)/.git/config
+	@set -ue # Clone user settings for working with the web edition
+	set -x
+	cd $(VscodeUserDir)
+	git checkout devx-spaces || :
+	git pull
 	touch $@
 
 
