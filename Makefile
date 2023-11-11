@@ -72,8 +72,10 @@ $(VscodeUserDir)/.git/config:
 	mkdir tmp-$$$$
 	git clone https://github.com/Stabledog/vscode.settings.git tmp-$$$$
 	mv tmp-$$$$/.git ./ && rm -rf tmp-$$$$
+	echo "$$PWD 1" >> $(HOME)/.tox-index
 	cd snippets || { mkdir snippets && cd snippets ; }
 	git clone https://github.com/Stabledog/vscode.snippets.git ./
+	echo "$$PWD 1" >> $(HOME)/.tox-index
 
 $(Flag)/vsweb-settings: $(VscodeUserDir)/.git/config
 	@set -ue # Clone user settings for working with the web edition
