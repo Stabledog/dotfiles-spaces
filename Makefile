@@ -7,8 +7,10 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 Code = $(shell which code code-server 2>/dev/null | head -n 1)
+User := $(shell whoami)
 
 VscodeUserDir = $(HOME)/.local/share/code-server/User
+VscodeSettingsOrg = bbgithub:$(User)
 
 Flag := $(HOME)/.flag-dotfiles
 
@@ -65,24 +67,22 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 	}
 	touch $@
 
-$(VscodeUserDir)/.git/config:
-	@set -ue # Clone user settings for working with the web edition
-	set -x
-	cd $(VscodeUserDir)
-	mkdir tmp-$$$$
-	git clone https://github.com/Stabledog/vscode.settings.git tmp-$$$$
-	mv tmp-$$$$/.git ./ && rm -rf tmp-$$$$
-	echo "$$PWD 1" >> $(HOME)/.tox-index
-	cd snippets || { mkdir snippets && cd snippets ; }
-	git clone https://github.com/Stabledog/vscode.snippets.git ./
-	echo "$$PWD 1" >> $(HOME)/.tox-index
 
-$(Flag)/vsweb-settings: $(VscodeUserDir)/.git/config
+$(Flag)/vsweb-settings: Makefile
 	@set -ue # Clone user settings for working with the web edition
 	set -x
-	cd $(VscodeUserDir)
-	git checkout devx-spaces || :
-	git pull
+	orgDir=$$(dirname $(VscodeUserDir))
+	cd $$orgDir
+	git clone -b devx-spaces $(VscodeSettingsOrg)/vscode.settings ./User-tmp-$$$$
+	cd ./User-tmp-$$$$
+	[[ -d ./snippets ]] && exit 19
+	git clone -b main $(VscodeSettingsOrg)/vscode.snippets ./snippets
+	cd $$orgDir
+	[[ -e ./User ]] && {
+		mv ./User ./User-old-$$$$
+	}
+	mv ./User-tmp-$$$$ ./User
+	
 	touch $@
 
 
