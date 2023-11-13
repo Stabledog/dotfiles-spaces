@@ -19,6 +19,8 @@ none: $(Flag)/.init
 
 $(Flag)/.init:
 	mkdir -p $(Flag)
+	echo "$(Flag) 1" >> $(HOME)/.tox-index
+	echo "$(HOME)/dotfiles" >> $(HOME)/.tox-index
 	touch $@
 
 jumpstart: $(Flag)/jumpstart
@@ -86,6 +88,9 @@ $(Flag)/vsweb-settings: Makefile
 		mv ./User ./User-old-$$$$
 	}
 	mv ./User-tmp-$$$$ ./User
+	cd ./User/snippets && {
+		echo "$$PWD 1" >> $(HOME)/.tox-index
+	}
 
 	touch $@
 
