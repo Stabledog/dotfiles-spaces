@@ -11,6 +11,7 @@ User := $(shell whoami)
 
 VscodeUserDir = $(HOME)/.local/share/code-server/User
 VscodeSettingsOrg = bbgithub:$(User)
+GhPubOrg = https://github.com/Stabledog
 
 Flag := $(HOME)/.flag-dotfiles
 
@@ -73,16 +74,19 @@ $(Flag)/vsweb-settings: Makefile
 	set -x
 	orgDir=$$(dirname $(VscodeUserDir))
 	cd $$orgDir
-	git clone -b devx-spaces $(VscodeSettingsOrg)/vscode.settings ./User-tmp-$$$$
+	git clone -o lm4 -b devx-spaces $(VscodeSettingsOrg)/vscode.settings ./User-tmp-$$$$
 	cd ./User-tmp-$$$$
+	git remote add ghmine $(GhPubOrg)/vscode.settings.git
 	[[ -d ./snippets ]] && exit 19
-	git clone -b main $(VscodeSettingsOrg)/vscode.snippets ./snippets
+	git clone -o lm4 -b main $(VscodeSettingsOrg)/vscode.snippets ./snippets
+	cd ./snippets
+	git remote add ghmine $(GhPubOrg)/vscode.snippets.git
 	cd $$orgDir
 	[[ -e ./User ]] && {
 		mv ./User ./User-old-$$$$
 	}
 	mv ./User-tmp-$$$$ ./User
-	
+
 	touch $@
 
 
