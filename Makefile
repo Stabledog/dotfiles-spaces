@@ -71,7 +71,7 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 	touch $@
 
 
-$(Flag)/vsweb-settings: Makefile
+$(Flag)/vsweb-settings: $(Flag)/.init Makefile
 	@set -ue # Clone user settings for working with the web edition
 	set -x
 	orgDir=$$(dirname $(VscodeUserDir))
