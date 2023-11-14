@@ -29,7 +29,8 @@ vbase: $(Flag)/vbase
 vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
-mega: makestuff vbase vscodevim spaceup vsweb-settings
+app-setup: $(Flag)/app-setup
+mega: makestuff vbase vscodevim spaceup vsweb-settings app-setup
 
 $(Flag)/jumpstart: $(Flag)/.init
 	@set -ue
@@ -106,6 +107,37 @@ $(Flag)/vsweb-colorthemes:
 	$(Code) --install-extension catppuccin.catppuccin-vsc
 	touch $@
 
+$(Flag)/app-setup:
+	@set -ue
+	#  The "app" is "whatever primary codebase(s) were cloned by DevX Spaces.
+	#  For any git WC off the root (e.g. /*/.git exists), find the list of
+	#  makefiles that we recognize as environment setup and run them.
+	#
+	#  We recognize all of the following:
+	#     /dotfiles.mk
+	#     /.dotfiles.mk
+	#     /spaces-dotfiles.mk
+	#     /me/dotfiles.mk
+	#     /me/.dotfiles.mk
+	#     /me/spaces-dotfiles.mk
+	#
+	#  In all cases, we cd to the dir containing the makefile first.
+	#
+	cd /
+	for xroot in $$(ls -d /*/.git 2>/dev/null | sed 's|/.git||' ); do
+		for makefile in $$(ls $${xroot}/{me,}/{.dotfiles,dotfiles,spaces-dotfiles}.mk 2>/dev/null) ; do
+			echo "app-setup found: $$makefile" >&2
+			(
+				set -ue
+				cd $$(dirname $$makefile)
+				make -f $$(basename $$makefile) || {
+					echo "ERROR 19: failed running \"make $$makefile\" in $$PWD"
+					exit 1
+				}
+			)
+		done
+	done
+	touch $@
 
 
 clean:
