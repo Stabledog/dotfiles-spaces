@@ -23,12 +23,13 @@ $(Flag)/.init:
 	echo "$(HOME)/dotfiles" >> $(HOME)/.tox-index
 	touch $@
 
+makestuff: $(Flag)/makestuff
 jumpstart: $(Flag)/jumpstart
 vbase: $(Flag)/vbase
-makestuff: $(Flag)/makestuff
 vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
+mega: makestuff vbase vscodevim spaceup vsweb-settings
 
 $(Flag)/jumpstart: $(Flag)/.init
 	@set -ue
