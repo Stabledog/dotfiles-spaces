@@ -3,7 +3,7 @@ SHELL=/bin/bash
 .ONESHELL:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-print-directory
-
+Remake = make $(MAKEFLAGS) -f $(realpath $(lastword $(MAKEFILE_LIST)))
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 Code = $(shell which code code-server 2>/dev/null | head -n 1)
@@ -97,7 +97,8 @@ $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 	cd ./User/snippets && {
 		echo "$$PWD 1" >> $(HOME)/.tox-index
 	}
-	$(MAKE) $(Flag)/vsweb-colorthemes
+	cd $(absdir)
+	$(Remake) $(Flag)/vsweb-colorthemes
 
 	touch $@
 
