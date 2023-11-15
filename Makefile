@@ -54,6 +54,7 @@ $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
 	bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase'
 	bash -lic 'vi-mode.sh on'
+	echo 'alias d=dirs' >> $(HOME)/.cdpprc
 	touch $@
 
 $(Flag)/makestuff: $(Flag)/jumpstart
