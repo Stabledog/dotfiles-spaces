@@ -15,6 +15,23 @@ GhPubOrg = https://github.com/Stabledog
 
 Flag := $(HOME)/.flag-dotfiles
 
+Config:
+	@set -ue
+
+	cat <<-EOF
+	#  $(absdir)Makefile:
+	Makefile=$(lastword $(MAKEFILE_LIST))
+	Code=$(Code)
+	absdir=$(absdir)
+	User=$(User)
+	GITHUB_USER=$(GITHUB_USER)
+	VscodeSettingsOrg=$(VscodeSettingsOrg)
+	VscodeUserDir=$(VscodeUserDir)
+	GhPubOrg=$(GhPubOrg)
+	Remake=$(Remake)
+
+	EOF
+
 none: $(Flag)/.init
 
 $(Flag)/.init:
