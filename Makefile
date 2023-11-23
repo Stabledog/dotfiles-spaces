@@ -1,4 +1,26 @@
 # Makefile for dotfiles-spaces
+	#  App-specific init hooks:
+	#  ------------------------
+	#  Target: app-setup
+	#
+	#  The "app" is "whatever primary repos(s) were cloned by DevX Spaces."
+	#  For any git WC off the root (e.g. /*/.git exists), find the list of
+	#  makefiles that we recognize as environment setup and run them.
+	#
+	#  We recognize all of the following:
+	#     /.dotfiles.mk
+	#     /dotfiles.mk
+	#     /spaces-dotfiles.mk
+	#     /me/.dotfiles.mk
+	#     /me/dotfiles.mk
+	#     /me/spaces-dotfiles.mk
+	#
+	#  For all such files:
+	#     - we 'cd' to the dir containing the makefile first
+	#     - we invoke the default target
+	#     - the ordering within a dir is always [.dotfiles.mk, dotfiles.mk,spaces-dotfiles.mk]
+	#     - any error in any hook aborts the entire hook sequence remaining
+	#
 SHELL=/bin/bash
 .ONESHELL:
 .SUFFIXES:
@@ -15,6 +37,16 @@ GhPubOrg = https://github.com/Stabledog
 
 Flag := $(HOME)/.flag-dotfiles
 
+
+AppSetupHooks = $(shell \
+				for xroot in $$(ls -d /*/.git 2>/dev/null | sed 's|/.git||'); do \
+					for makefile in $$(ls $${xroot}{/me,}/{.dotfiles,dotfiles,spaces-dotfiles}.mk 2>/dev/null); do \
+						echo $$makefile; \
+					done; \
+				done; \
+			)
+
+
 Config:
 	@set -ue
 
@@ -29,6 +61,7 @@ Config:
 	VscodeUserDir=$(VscodeUserDir)
 	GhPubOrg=$(GhPubOrg)
 	Remake=$(Remake)
+	AppSetupHooks="$(AppSetupHooks)"
 
 	EOF
 
@@ -130,34 +163,19 @@ $(Flag)/vsweb-colorthemes:
 
 $(Flag)/app-setup:
 	@set -ue
-	#  The "app" is "whatever primary codebase(s) were cloned by DevX Spaces.
-	#  For any git WC off the root (e.g. /*/.git exists), find the list of
-	#  makefiles that we recognize as environment setup and run them.
-	#
-	#  We recognize all of the following:
-	#     /dotfiles.mk
-	#     /.dotfiles.mk
-	#     /spaces-dotfiles.mk
-	#     /me/dotfiles.mk
-	#     /me/.dotfiles.mk
-	#     /me/spaces-dotfiles.mk
-	#
-	#  In all cases, we cd to the dir containing the makefile first.
-	#
-	cd /
-	for xroot in $$(ls -d /*/.git 2>/dev/null | sed 's|/.git||' ); do
-		for makefile in $$(ls $${xroot}/{me,}/{.dotfiles,dotfiles,spaces-dotfiles}.mk 2>/dev/null) ; do
-			echo "app-setup found: $$makefile" >&2
+	[[ -n "$(AppSetupHooks)" ]] && {
+		for hook in $(AppSetupHooks); do
 			(
 				set -ue
-				cd $$(dirname $$makefile)
-				make -f $$(basename $$makefile) || {
-					echo "ERROR 19: failed running \"make $$makefile\" in $$PWD"
+				echo "app-setup hook start: $$hook:" >&2
+				cd $$(dirname $$hook)
+				make -f $$(basename $$hook) || {
+					echo "ERROR 19: failed running \"make $$hook\" in $$PWD"
 					exit 1
 				}
 			)
 		done
-	done
+	}
 	touch $@
 
 
