@@ -109,7 +109,7 @@ $(Flag)/spaceup:
 	@set -ue # Spaces-specific helpers
 	set -x
 	echo Making $@:
-	bash -lic 'test -n "$$SPACEUP"' && { touch $@; exit 0; } || {
+	bash -lic 'test -n "$$SPACEUP" && true || false; exit' && { touch $@; exit 0; } || {
 		echo 'source $${HOME}/dotfiles/dot/spaceup.bashrc # Added by dotfiles/Makefile:spaceup' >> $(HOME)/.bashrc
 	}
 	touch $@
