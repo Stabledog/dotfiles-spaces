@@ -113,6 +113,7 @@ $(Flag)/spaceup:
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
+	set -x
 	bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase; exit;'
 	bash -lic 'vi-mode.sh on'
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
@@ -120,6 +121,7 @@ $(Flag)/vbase: $(Flag)/jumpstart
 
 $(Flag)/makestuff: $(Flag)/jumpstart
 	@set -ue
+	set -x
 	which make || { echo ERROR: make not found on PATH ; exit 1; }
 	bash -lic 'complete -p | grep -q _make' && {
 		touch $@
@@ -136,6 +138,7 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 
 $(Flag)/vimsane:
 	@set -ue
+	set -x
 	mkdir -p $(HOME)/tmp
 	cd $(HOME)/tmp
 	[[ -d vimsane ]] || {
