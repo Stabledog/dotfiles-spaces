@@ -18,9 +18,9 @@ do_detect() {
         *codespaces*) DOTFILES_SYS=codespaces;;
         *) DOTFILES_SYS=unknown;;
     esac
-
+    
     ISBB=false
-    curl -IL bbgithub.dev.bloomberg.com &>/dev/null && {
+    curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | grep -q '301 Moved Permanently' 2>/dev/null && {
         ISBB=true
     }
 

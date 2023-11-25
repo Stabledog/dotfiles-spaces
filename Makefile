@@ -123,7 +123,7 @@ $(Flag)/spaceup:
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
-	set -x
+	$(ISBB) || exit 23
 	bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase; exit;'
 	bash -lic 'vi-mode.sh on'
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
