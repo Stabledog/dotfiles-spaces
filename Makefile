@@ -58,6 +58,7 @@ Config:
 	User=$(User)
 	DOTFILES_SYS=$(DOTFILES_SYS)
 	GITHUB_USER=$(GITHUB_USER)
+	ISBB=$(ISBB)
 	VscodeSettingsOrg=$(VscodeSettingsOrg)
 	VscodeUserDir=$(VscodeUserDir)
 	GhPubOrg=$(GhPubOrg)
@@ -99,8 +100,10 @@ vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
 	@set -ue
+	$(ISBB) || exit 17
 	curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \
-		-o ~/jumpstart-$$UID-$$$$ && bash ~/jumpstart-$$UID-$$$$ && rm -f ~/jumpstart-$$UID-$$$$
+		-o ~/jumpstart-$$UID-$$$$ || exit 19
+	bash ~/jumpstart-$$UID-$$$$ && rm -f ~/jumpstart-$$UID-$$$$
 	touch $@
 
 $(Flag)/vscodevim:
@@ -212,6 +215,7 @@ $(Flag)/app-setup:
 
 clean:
 	@set -ue
+	rm $(absdir).env.mk || :
 	[[ -d $(Flag) ]] && rm $(Flag)/* &>/dev/null || :
 
 
