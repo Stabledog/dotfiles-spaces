@@ -130,7 +130,9 @@ $(Flag)/vimsane:
 	@set -ue
 	mkdir -p $(HOME)/tmp
 	cd $(HOME)/tmp
-	git clone bbgithub:sanekits/vimsane 
+	[[ -d vimsane ]] || {
+		git clone bbgithub:sanekits/vimsane
+	}
 	cd vimsane
 	make setup
 	touch $@
