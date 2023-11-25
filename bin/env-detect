@@ -1,3 +1,35 @@
 #!/bin/bash
 # env-detect
+# Invoked by ../Makefile, we emit Make text based on study of the target environment
+
+scriptName="$(readlink -f "$0")"
+scriptDir=$(command dirname -- "${scriptName}")
+
+die() {
+    builtin echo "ERROR($(basename ${scriptName})): $*" >&2
+    builtin exit 1
+}
+
+do_detect() {
+    local uname_x=$(uname -a)
+    DOTFILES_SYS=
+    case $uname_x in
+        *WSL2*) DOTFILES_SYS=wsl;;
+    esac
+
+    cat <<-EOF
+DOTFILES_SYS ?= $DOTFILES_SYS
+Code = $(which code code-server 2>/dev/null | head -n 1)
+User = $(whoami)
+
+EOF
+}
+
+
+[[ -z ${sourceMe} ]] && {
+    do_detect "$@"
+    builtin exit
+}
+command true
+
 

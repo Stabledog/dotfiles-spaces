@@ -1,9 +1,9 @@
 # Makefile for dotfiles-spaces
-	#  App-specific init hooks:
-	#  ------------------------
 	#  Target: app-setup
+	#  About app-specific init hooks:
+	#  ------------------------
 	#
-	#  The "app" is "whatever primary repos(s) were cloned by DevX Spaces."
+	#  The "app" is "whatever primary repos(s) were cloned by DevX Spaces/codespaces"
 	#  For any git WC off the root (e.g. /*/.git exists), find the list of
 	#  makefiles that we recognize as environment setup and run them.
 	#
@@ -28,8 +28,10 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 Remake = make $(MAKEFLAGS) -f $(realpath $(lastword $(MAKEFILE_LIST)))
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
-Code = $(shell which code code-server 2>/dev/null | head -n 1)
-User := $(shell whoami)
+# Create .env.mk
+$(shell $(absdir)bin/env-detect > $(absdir).env.mk)
+include $(absdir).env.mk
+
 
 VscodeUserDir = $(HOME)/.local/share/code-server/User
 VscodeSettingsOrg = bbgithub:$(User)
@@ -56,6 +58,7 @@ Config:
 	Code=$(Code)
 	absdir=$(absdir)
 	User=$(User)
+	DOTFILES_SYS=$(DOTFILES_SYS)
 	GITHUB_USER=$(GITHUB_USER)
 	VscodeSettingsOrg=$(VscodeSettingsOrg)
 	VscodeUserDir=$(VscodeUserDir)
