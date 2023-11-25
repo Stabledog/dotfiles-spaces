@@ -98,6 +98,7 @@ $(Flag)/jumpstart: $(Flag)/.init
 
 $(Flag)/vscodevim:
 	@set -ue
+	set -x
 	$(Code) --install-extension vscodevim.vim
 	touch $@
 
@@ -146,7 +147,7 @@ $(Flag)/vimsane:
 
 $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 	@set -ue # Clone user settings for working with the web edition
-
+	set -x
 	# (re)-build the vscode settings dir for user in ~/.local/share/...
 	# We set up 2 remotes so Spaces can be used to manage settings reconciliation
 	orgDir=$$(dirname $(VscodeUserDir))
@@ -175,12 +176,14 @@ $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 
 $(Flag)/vsweb-colorthemes:
 	@set -ue
+	set -x
 	$(Code) --install-extension ahmadawais.shades-of-purple
 	$(Code) --install-extension catppuccin.catppuccin-vsc
 	touch $@
 
 $(Flag)/app-setup:
 	@set -ue
+	set -x
 	[[ -n "$(AppSetupHooks)" ]] && {
 		for hook in $(AppSetupHooks); do
 			(
