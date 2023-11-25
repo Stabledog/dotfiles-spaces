@@ -80,7 +80,14 @@ vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
 app-setup: $(Flag)/app-setup
-mega: makestuff vbase vimsane vscodevim spaceup vsweb-settings app-setup
+mega: \
+	makestuff \
+	vbase \
+	vimsane \
+	vscodevim \
+	spaceup \
+	vsweb-settings \
+	app-setup
 vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
