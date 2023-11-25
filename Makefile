@@ -29,9 +29,7 @@ Remake = make $(MAKEFLAGS) -f $(realpath $(lastword $(MAKEFILE_LIST)))
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # Create .env.mk
-$(shell $(absdir)bin/env-detect > $(absdir).env.mk)
 include $(absdir).env.mk
-
 
 VscodeUserDir = $(HOME)/.local/share/code-server/User
 VscodeSettingsOrg = bbgithub:$(User)
@@ -69,6 +67,9 @@ Config:
 	EOF
 
 none: $(Flag)/.init
+
+$(absdir).env.mk: $(absdir)bin/env-detect
+	$< > $@
 
 $(Flag)/.init:
 	mkdir -p $(Flag)
