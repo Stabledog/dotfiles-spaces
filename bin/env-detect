@@ -18,12 +18,12 @@ do_detect() {
         *codespaces*) DOTFILES_SYS=codespaces;;
         *) DOTFILES_SYS=unknown;;
     esac
-    set -x
+
     ISBB=false
     curl -IL bbgithub.dev.bloomberg.com &>/dev/null && {
         ISBB=true
-    } 
-    set +x
+    }
+
 
     cat <<-EOF
 DOTFILES_SYS ?= $DOTFILES_SYS
