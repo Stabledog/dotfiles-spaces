@@ -83,11 +83,14 @@ app-setup: $(Flag)/app-setup
 mega: \
 	makestuff \
 	vbase \
-	vimsane \
-	vscodevim \
 	spaceup \
+	vscodevim \
 	vsweb-settings \
-	app-setup
+	app-setup \
+	vimsane
+	@set -ue
+	echo "Ok: $@"
+
 vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
