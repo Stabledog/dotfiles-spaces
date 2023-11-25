@@ -1,4 +1,26 @@
 # Makefile for dotfiles-spaces
+	#  App-specific init hooks:
+	#  ------------------------
+	#  Target: app-setup
+	#
+	#  The "app" is "whatever primary repos(s) were cloned by DevX Spaces."
+	#  For any git WC off the root (e.g. /*/.git exists), find the list of
+	#  makefiles that we recognize as environment setup and run them.
+	#
+	#  We recognize all of the following:
+	#     /.dotfiles.mk
+	#     /dotfiles.mk
+	#     /spaces-dotfiles.mk
+	#     /me/.dotfiles.mk
+	#     /me/dotfiles.mk
+	#     /me/spaces-dotfiles.mk
+	#
+	#  For all such files:
+	#     - we 'cd' to the dir containing the makefile first
+	#     - we invoke the default target
+	#     - the ordering within a dir is always [.dotfiles.mk, dotfiles.mk,spaces-dotfiles.mk]
+	#     - any error in any hook aborts the entire hook sequence remaining
+	#
 SHELL=/bin/bash
 .ONESHELL:
 .SUFFIXES:
@@ -15,6 +37,16 @@ GhPubOrg = https://github.com/Stabledog
 
 Flag := $(HOME)/.flag-dotfiles
 
+
+AppSetupHooks = $(shell \
+				for xroot in $$(ls -d /*/.git 2>/dev/null | sed 's|/.git||'); do \
+					for makefile in $$(ls $${xroot}{/me,}/{.dotfiles,dotfiles,spaces-dotfiles}.mk 2>/dev/null); do \
+						echo $$makefile; \
+					done; \
+				done; \
+			)
+
+
 Config:
 	@set -ue
 
@@ -29,6 +61,7 @@ Config:
 	VscodeUserDir=$(VscodeUserDir)
 	GhPubOrg=$(GhPubOrg)
 	Remake=$(Remake)
+	AppSetupHooks="$(AppSetupHooks)"
 
 	EOF
 
@@ -47,7 +80,18 @@ vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
 app-setup: $(Flag)/app-setup
-mega: makestuff vbase vscodevim spaceup vsweb-settings app-setup
+mega: \
+	makestuff \
+	vbase \
+	spaceup \
+	vscodevim \
+	vsweb-settings \
+	app-setup \
+	vimsane
+	@set -ue
+	echo "Ok: $@"
+
+vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
 	@set -ue
@@ -57,6 +101,7 @@ $(Flag)/jumpstart: $(Flag)/.init
 
 $(Flag)/vscodevim:
 	@set -ue
+	set -x
 	$(Code) --install-extension vscodevim.vim
 	touch $@
 
@@ -64,20 +109,22 @@ $(Flag)/spaceup:
 	@set -ue # Spaces-specific helpers
 	set -x
 	echo Making $@:
-	bash -lic '[[ -n "$$SPACEUP" ]]' && { touch $@; exit 1; } || {
+	bash -lic 'test -n "$$SPACEUP" && true || false; exit' && { touch $@; exit 0; } || {
 		echo 'source $${HOME}/dotfiles/dot/spaceup.bashrc # Added by dotfiles/Makefile:spaceup' >> $(HOME)/.bashrc
 	}
 	touch $@
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
-	bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase'
+	set -x
+	bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase; exit;'
 	bash -lic 'vi-mode.sh on'
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
 	touch $@
 
 $(Flag)/makestuff: $(Flag)/jumpstart
 	@set -ue
+	set -x
 	which make || { echo ERROR: make not found on PATH ; exit 1; }
 	bash -lic 'complete -p | grep -q _make' && {
 		touch $@
@@ -92,10 +139,21 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 	}
 	touch $@
 
+$(Flag)/vimsane:
+	@set -ue
+	set -x
+	mkdir -p $(HOME)/tmp
+	cd $(HOME)/tmp
+	[[ -d vimsane ]] || {
+		git clone bbgithub:sanekits/vimsane
+	}
+	cd vimsane
+	make setup
+	touch $@
 
 $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 	@set -ue # Clone user settings for working with the web edition
-
+	set -x
 	# (re)-build the vscode settings dir for user in ~/.local/share/...
 	# We set up 2 remotes so Spaces can be used to manage settings reconciliation
 	orgDir=$$(dirname $(VscodeUserDir))
@@ -124,40 +182,27 @@ $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 
 $(Flag)/vsweb-colorthemes:
 	@set -ue
+	set -x
 	$(Code) --install-extension ahmadawais.shades-of-purple
 	$(Code) --install-extension catppuccin.catppuccin-vsc
 	touch $@
 
 $(Flag)/app-setup:
 	@set -ue
-	#  The "app" is "whatever primary codebase(s) were cloned by DevX Spaces.
-	#  For any git WC off the root (e.g. /*/.git exists), find the list of
-	#  makefiles that we recognize as environment setup and run them.
-	#
-	#  We recognize all of the following:
-	#     /dotfiles.mk
-	#     /.dotfiles.mk
-	#     /spaces-dotfiles.mk
-	#     /me/dotfiles.mk
-	#     /me/.dotfiles.mk
-	#     /me/spaces-dotfiles.mk
-	#
-	#  In all cases, we cd to the dir containing the makefile first.
-	#
-	cd /
-	for xroot in $$(ls -d /*/.git 2>/dev/null | sed 's|/.git||' ); do
-		for makefile in $$(ls $${xroot}/{me,}/{.dotfiles,dotfiles,spaces-dotfiles}.mk 2>/dev/null) ; do
-			echo "app-setup found: $$makefile" >&2
+	set -x
+	[[ -n "$(AppSetupHooks)" ]] && {
+		for hook in $(AppSetupHooks); do
 			(
 				set -ue
-				cd $$(dirname $$makefile)
-				make -f $$(basename $$makefile) || {
-					echo "ERROR 19: failed running \"make $$makefile\" in $$PWD"
+				echo "app-setup hook start: $$hook:" >&2
+				cd $$(dirname $$hook)
+				make -f $$(basename $$hook) || {
+					echo "ERROR 19: failed running \"make $$hook\" in $$PWD"
 					exit 1
 				}
 			)
 		done
-	done
+	}
 	touch $@
 
 
