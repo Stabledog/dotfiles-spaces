@@ -80,7 +80,8 @@ vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
 app-setup: $(Flag)/app-setup
-mega: makestuff vbase vscodevim spaceup vsweb-settings app-setup
+mega: makestuff vbase vimsane vscodevim spaceup vsweb-settings app-setup
+vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
 	@set -ue
@@ -125,6 +126,14 @@ $(Flag)/makestuff: $(Flag)/jumpstart
 	}
 	touch $@
 
+$(Flag)/vimsane:
+	@set -ue
+	mkdir -p $(HOME)/tmp
+	cd $(HOME)/tmp
+	git clone bbgithub:sanekits/vimsane 
+	cd vimsane
+	make setup
+	touch $@
 
 $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 	@set -ue # Clone user settings for working with the web edition
