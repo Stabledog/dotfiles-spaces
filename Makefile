@@ -33,8 +33,8 @@ SHELL=/bin/bash
 .ONESHELL:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-print-directory
-Remake = make $(MAKEFLAGS) -f $(realpath $(lastword $(MAKEFILE_LIST)))
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+Remake = make $(MAKEFLAGS) -f $(absdir)Makefile 
 
 # Create+include .env.mk and .metatargets.mk:
 include $(absdir).env.mk
@@ -86,9 +86,12 @@ $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
 
 $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 	@set -ue # metatargets like 'mega' need some conditional logic
-	cat <<-EOF > $@
-	Megadeps = mega-codespaces
-	EOF
+	set -x
+	exec 1> $@
+	case $(DOTFILES_SYS) in
+		codespaces) echo 'Megadeps = mega-codespaces' ;;
+		devxspaces) echo 'Megadeps = mega-devxspaces' ;;
+	esac
 
 $(Flag)/.init:
 	mkdir -p $(Flag)
@@ -103,7 +106,7 @@ vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
 app-setup: $(Flag)/app-setup
-shell: 
+shell:
 mega-devxspaces: \
 	makestuff \
 	vbase \
@@ -164,7 +167,7 @@ $(Flag)/vbase: $(Flag)/jumpstart
 		curl -L https://github.com/sanekits/shellkit-pm/releases/download/0.9.1/shellkit-bootstrap.sh -o ./shellkit-bootstrap.sh
 		bash ./shellkit-bootstrap.sh
 		bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase'
-	} 
+	}
 	bash -lic 'vi-mode.sh on'
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
 	touch $@
@@ -266,7 +269,7 @@ $(Flag)/app-setup:
 mega: $(Megadeps)
 
 shell:
-	@set -ue   # Helper shell for maintaining the dotfiles repo 
+	@set -ue   # Helper shell for maintaining the dotfiles repo
 	cd $(absdir)
 	Ps1Tail=dotshell bash
 

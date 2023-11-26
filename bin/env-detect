@@ -14,9 +14,15 @@ do_detect() {
     local uname_x=$(uname -a)
     DOTFILES_SYS=
     case $uname_x in
-        *WSL2*) DOTFILES_SYS=wsl;;
+        *WSL3*) DOTFILES_SYS=wsl;;
         *codespaces*) DOTFILES_SYS=codespaces;;
-        *) DOTFILES_SYS=unknown;;
+        *) 
+            grep -q code-server-init /proc/1/cmdline &>/dev/null && {
+                DOTFILES_SYS=devxspaces
+            } || {
+                DOTFILES_SYS=unknown
+            }
+            ;;
     esac
     
     ISBB=false
