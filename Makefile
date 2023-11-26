@@ -1,21 +1,29 @@
 # Makefile for dotfiles-spaces
-	#  Target: app-setup
+#
+    #  Using ~/.dotmake:
+    #  ----------------
+    #    Both Devx Spaces and github Codespaces will symlink our ~/.dotmake launcher into
+    #    the HOME tree.  It invokes our Makefile after first capturing the cwd to ORGDIR,
+    #    and then changing to the ~/dotfiles-spaces dir.
+    #
+    #
 	#  About app-specific init hooks:
-	#  ------------------------
+	#  (using target 'app-setup')
+	#  -----------------------------
 	#
-	#  The "app" is "whatever primary repos(s) were cloned by DevX Spaces/codespaces"
-	#  For any git WC off the root (e.g. /*/.git exists), find the list of
-	#  makefiles that we recognize as environment setup and run them.
+	#    The "app" is "whatever primary repos(s) were cloned by DevX Spaces/codespaces"
+	#    For any git WC off the root (e.g. /*/.git exists), find the list of
+	#    makefiles that we recognize as environment setup and run them.
 	#
-	#  We recognize all of the following:
-	#     /.dotfiles.mk
-	#     /dotfiles.mk
-	#     /spaces-dotfiles.mk
-	#     /me/.dotfiles.mk
-	#     /me/dotfiles.mk
-	#     /me/spaces-dotfiles.mk
+	#    We recognize all of the following:
+	#       /.dotfiles.mk
+	#       /dotfiles.mk
+	#       /spaces-dotfiles.mk
+	#       /me/.dotfiles.mk
+	#       /me/dotfiles.mk
+	#       /me/spaces-dotfiles.mk
 	#
-	#  For all such files:
+	#    For all such files:
 	#     - we 'cd' to the dir containing the makefile first
 	#     - we invoke the default target
 	#     - the ordering within a dir is always [.dotfiles.mk, dotfiles.mk,spaces-dotfiles.mk]
@@ -66,6 +74,7 @@ Config:
 	Remake=$(Remake)
 	AppSetupHooks="$(AppSetupHooks)"
 	Megadeps="$(Megadeps)"
+	ORGDIR="$(ORGDIR)"
 
 	EOF
 
@@ -77,7 +86,7 @@ $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
 
 $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 	@set -ue # metatargets like 'mega' need some conditional logic
-	cat <<-EOF
+	cat <<-EOF > $@
 	Megadeps = mega-codespaces
 	EOF
 
@@ -142,7 +151,7 @@ $(Flag)/vbase: $(Flag)/jumpstart
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
 	touch $@
 
-$(Flag)/makestuff: 
+$(Flag)/makestuff:
 	@set -ue
 	which make || { echo ERROR: make not found on PATH ; exit 1; }
 	source $(HOME)/.bashrc
