@@ -14,9 +14,9 @@ do_detect() {
     local uname_x=$(uname -a)
     DOTFILES_SYS=
     case $uname_x in
-        *WSL3*) DOTFILES_SYS=wsl;;
+        *WSL2*) DOTFILES_SYS=wsl;;
         *codespaces*) DOTFILES_SYS=codespaces;;
-        *) 
+        *)
             grep -q code-server-init /proc/1/cmdline &>/dev/null && {
                 DOTFILES_SYS=devxspaces
             } || {
@@ -24,7 +24,7 @@ do_detect() {
             }
             ;;
     esac
-    
+
     ISBB=false
     curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | grep -q '301 Moved Permanently' 2>/dev/null && {
         ISBB=true
