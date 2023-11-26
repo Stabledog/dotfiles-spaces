@@ -170,9 +170,10 @@ $(Flag)/vbase: $(Flag)/jumpstart
 	touch $@
 
 $(Flag)/makestuff: $(Flag)/.init
-	@set -ue
+	@set +ue
 	which make || { echo ERROR: make not found on PATH ; exit 1; }
 	source $(HOME)/.bashrc
+	set -ue
 	complete -p make &>/dev/null && {
 		touch $@
 		exit
@@ -271,7 +272,7 @@ shell:
 
 clean:
 	@set -ue
-	rm $(absdir).env.mk || :
+	rm $(absdir).env.mk $(absdir).metatargets.mk || :
 	[[ -d $(Flag) ]] && rm $(Flag)/* &>/dev/null || :
 
 
