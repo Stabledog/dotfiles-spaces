@@ -28,8 +28,9 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 Remake = make $(MAKEFLAGS) -f $(realpath $(lastword $(MAKEFILE_LIST)))
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# Create .env.mk
+# Create+include .env.mk and .metatargets.mk:
 include $(absdir).env.mk
+include $(absdir).metatargets.mk
 
 VscodeUserDir = $(HOME)/.local/share/code-server/User
 VscodeSettingsOrg = bbgithub:$(User)
@@ -64,13 +65,21 @@ Config:
 	GhPubOrg=$(GhPubOrg)
 	Remake=$(Remake)
 	AppSetupHooks="$(AppSetupHooks)"
+	Megadeps="$(Megadeps)"
 
 	EOF
 
 none: $(Flag)/.init
 
-$(absdir).env.mk: $(absdir)bin/env-detect
+$(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
+	@set -ue # Environment detection comes before any conditional stuff
 	$< > $@
+
+$(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
+	@set -ue # metatargets like 'mega' need some conditional logic
+	cat <<-EOF
+	Megadeps = mega-codespaces
+	EOF
 
 $(Flag)/.init:
 	mkdir -p $(Flag)
@@ -85,7 +94,7 @@ vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
 app-setup: $(Flag)/app-setup
-mega: \
+mega-devxspaces: \
 	makestuff \
 	vbase \
 	spaceup \
@@ -95,6 +104,10 @@ mega: \
 	vimsane
 	@set -ue
 	echo "Ok: $@"
+
+mega-codespaces: \
+	makestuff \
+	vbase
 
 vimsane: $(Flag)/vimsane
 
@@ -129,20 +142,30 @@ $(Flag)/vbase: $(Flag)/jumpstart
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
 	touch $@
 
-$(Flag)/makestuff: $(Flag)/jumpstart
+$(Flag)/makestuff: 
 	@set -ue
-	set -x
 	which make || { echo ERROR: make not found on PATH ; exit 1; }
-	bash -lic 'complete -p | grep -q _make' && {
+	source $(HOME)/.bashrc
+	complete -p make &>/dev/null && {
+		touch $@
+		exit
+	} || :
+	bash -lic 'complete -p | grep -q _make &>/dev/null' && {
 		touch $@
 		exit 0
-	} || {
-		[[ -f /opt/bb/share/bash-completion/bash_completion ]] || {
-			apt-get install -y bash-completion
-		}
-		bash -lic '[[ -n "$$BASH_COMPLETION_VERSINFO" ]]' || {
-			echo 'source /opt/bb/share/bash-completion/bash_completion # Added by dotfiles/Makefile:makestuff' >> $(HOME)/.bashrc
-		}
+	}  || :
+	CompletionSource=
+	for cf_file in /opt/bb/share/bash-completion/bash_completion /usr/share/bash-completion/bash_completion ; do
+		[[ -f  $$cf_file ]] && {
+			CompletionSource=$$cf_file
+			break
+		} || :
+	done
+	[[ -f "$$CompletionSource" ]] || {
+		apt-get install -y bash-completion
+	}
+	bash -lic '[[ -n "$$BASH_COMPLETION_VERSINFO" ]]' || {
+		echo 'source /opt/bb/share/bash-completion/bash_completion # Added by dotfiles/Makefile:makestuff' >> $(HOME)/.bashrc
 	}
 	touch $@
 
@@ -212,6 +235,7 @@ $(Flag)/app-setup:
 	}
 	touch $@
 
+mega: $(Megadeps)
 
 clean:
 	@set -ue
