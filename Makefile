@@ -103,6 +103,7 @@ vscodevim: $(Flag)/vscodevim
 spaceup: $(Flag)/spaceup
 vsweb-settings: $(Flag)/vsweb-settings
 app-setup: $(Flag)/app-setup
+shell: 
 mega-devxspaces: \
 	makestuff \
 	vbase \
@@ -122,7 +123,15 @@ vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
 	@set -ue
-	$(ISBB) || exit 17
+	$(ISBB) || {
+		set -x
+		bash -lic '[[ -n "$$JumpstartVersion" ]]' || {
+			command ln -sf $(absdir)jumpstart.bashrc $(HOME)
+			echo 'source ~/jumpstart.bashrc # Added by $(absdir)Makefile:$(@F)' >> ~/.bashrc
+		}
+		touch $@
+		exit 0
+	}
 	curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \
 		-o ~/jumpstart-$$UID-$$$$ || exit 19
 	bash ~/jumpstart-$$UID-$$$$ && rm -f ~/jumpstart-$$UID-$$$$
@@ -145,13 +154,22 @@ $(Flag)/spaceup:
 
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
-	$(ISBB) || exit 23
-	bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase; exit;'
+	set -x
+	$(ISBB) && {
+		bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase; exit;'
+	} || {
+		# Fallback to public shpm:
+		mkdir -p ~/tmp
+		cd ~/tmp
+		curl -L https://github.com/sanekits/shellkit-pm/releases/download/0.9.1/shellkit-bootstrap.sh -o ./shellkit-bootstrap.sh
+		bash ./shellkit-bootstrap.sh
+		bash -lic 'JUMPSTART_FORCE_YES=1 jumpstart add vbase'
+	} 
 	bash -lic 'vi-mode.sh on'
 	echo 'alias d=dirs' >> $(HOME)/.cdpprc
 	touch $@
 
-$(Flag)/makestuff:
+$(Flag)/makestuff: $(Flag)/.init
 	@set -ue
 	which make || { echo ERROR: make not found on PATH ; exit 1; }
 	source $(HOME)/.bashrc
@@ -245,6 +263,11 @@ $(Flag)/app-setup:
 	touch $@
 
 mega: $(Megadeps)
+
+shell:
+	@set -ue   # Helper shell for maintaining the dotfiles repo 
+	cd $(absdir)
+	Ps1Tail=dotshell bash
 
 clean:
 	@set -ue
