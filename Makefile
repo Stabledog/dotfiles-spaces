@@ -146,6 +146,7 @@ $(Flag)/vscodevim:
 	$(Code) --install-extension vscodevim.vim
 	touch $@
 
+
 $(Flag)/spaceup:
 	@set -ue # Spaces-specific helpers
 	set -x
