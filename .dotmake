@@ -1,9 +1,11 @@
 #!/bin/bash
 set -ue
+set -x
 export ORGDIR=$PWD
 
 DOTFILES=$(dirname $(readlink -f $0))
 
 cd $DOTFILES
-exec make -f ./Makefile "$@"
+
+make -f ./Makefile "$@"
 
