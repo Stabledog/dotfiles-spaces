@@ -87,12 +87,13 @@ $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
 $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 	@set -ue # metatargets like 'mega' need some conditional logic
 	set -x
+	source $(absdir).env.mk
 	{
-		echo "DOTFILES_SYS=$(DOTFILES_SYS)"
-		case "$(DOTFILES_SYS)" in
+		echo "DOTFILES_SYS=$${DOTFILES_SYS}"
+		case "$${DOTFILES_SYS}" in
 		 	codespaces) echo 'Megadeps = mega-codespaces' ;;
 		 	devxspaces) echo 'Megadeps = mega-devxspaces' ;;
-			*) exit 19  # Bad DOTFILES_SYS
+			*) exit 19  # Bad DOTFILES_SYS value 
 		 esac
 	} > $@
 
