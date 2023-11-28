@@ -34,7 +34,7 @@ SHELL=/bin/bash
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-print-directory
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-Remake = make $(MAKEFLAGS) -f $(absdir)Makefile 
+Remake = make $(MAKEFLAGS) -f $(absdir)Makefile
 
 # Create+include .env.mk and .metatargets.mk:
 include $(absdir).env.mk
@@ -86,14 +86,14 @@ $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
 
 $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 	@set -ue # metatargets like 'mega' need some conditional logic
-	set -x
 	source $(absdir).env.mk
 	{
 		echo "DOTFILES_SYS=$${DOTFILES_SYS}"
 		case "$${DOTFILES_SYS}" in
 		 	codespaces) echo 'Megadeps = mega-codespaces' ;;
 		 	devxspaces) echo 'Megadeps = mega-devxspaces' ;;
-			*) exit 19  # Bad DOTFILES_SYS value 
+		 	wsl) echo 'Megadeps = ' ;;
+			*) exit 19  # Bad DOTFILES_SYS value
 		 esac
 	} > $@
 

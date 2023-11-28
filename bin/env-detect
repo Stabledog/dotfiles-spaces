@@ -1,6 +1,8 @@
 #!/bin/bash
 # env-detect
 # Invoked by ../Makefile, we emit Make text based on study of the target environment
+#  The output can be consumed by either "include [filename]" in Make
+#  syntax or "source [filename]" in shell syntax, being just assignment statements.
 
 scriptName="$(readlink -f "$0")"
 scriptDir=$(command dirname -- "${scriptName}")
@@ -11,6 +13,7 @@ die() {
 }
 
 do_detect() {
+
     local uname_x=$(uname -a)
     DOTFILES_SYS=
     case $uname_x in
@@ -33,7 +36,7 @@ do_detect() {
 
     cat <<-EOF
     DOTFILES_SYS=$DOTFILES_SYS
-    Code=$(which code code-server 2>/dev/null | head -n 1)
+    Code="$(which code code-server 2>/dev/null | head -n 1)"
     User=$(whoami)
     ISBB=${ISBB}
 EOF
