@@ -90,9 +90,9 @@ $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 	{
 		echo "DOTFILES_SYS=$${DOTFILES_SYS}"
 		case "$${DOTFILES_SYS}" in
-		 	codespaces) echo 'Megadeps = mega-codespaces' ;;
-		 	devxspaces) echo 'Megadeps = mega-devxspaces' ;;
-		 	wsl) echo 'Megadeps = ' ;;
+		 	codespaces) echo 'Megadeps=mega-codespaces' ;;
+		 	devxspaces) echo 'Megadeps=mega-devxspaces' ;;
+		 	wsl) echo 'Megadeps=mega-wsl' ;;
 			*) exit 19  # Bad DOTFILES_SYS value
 		 esac
 	} > $@
@@ -125,9 +125,11 @@ mega-devxspaces: \
 mega-codespaces: \
 	makestuff \
 	vbase
+	echo "Ok: $@"
 
 mega-wsl: \
 	vimsane
+	echo "Ok: $@"
 
 vimsane: $(Flag)/vimsane
 
