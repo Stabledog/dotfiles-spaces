@@ -126,6 +126,9 @@ mega-codespaces: \
 	makestuff \
 	vbase
 
+mega-wsl: \
+	vimsane
+
 vimsane: $(Flag)/vimsane
 
 $(Flag)/jumpstart: $(Flag)/.init
