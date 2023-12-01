@@ -24,19 +24,22 @@ mega: $(Flag)/mega
 $(Flag)/mega: $(Finit)
 	@# Add our stuff to the metatargets.mk stuff:
 	source $(absdir).env.mk
+	inner_target=null
 	case "$(DOTFILES_SYS)" in
 		codespaces)
-			$(MAKE) -f $(Makefile) mega-codespaces ;;
+			inner_target=mega-codespaces ;;
 
 		devxspaces)
-			$(MAKE) -f $(Makefile) mega-devxspaces ;;
+			inner_target=mega-devxspaces ;;
 
 		wsl)
-			$(MAKE) -f $(Makefile) mega-wsl ;;
+			inner_target=mega-wsl ;;
 
 		*)
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
+	echo "mega target routes to target $$inner_target:" >&2
+	$(MAKE) -f $(Makefile) $$inner_target
 	touch $@
 
 
