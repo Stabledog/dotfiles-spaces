@@ -164,15 +164,9 @@ $(Flag)/vbase: $(Flag)/jumpstart
 	touch $@
 
 makestuff: $(Flag)/makestuff
-$(Flag)/makestuff: $(Flag)/.init
-	@set +ue
-	which make || { echo ERROR: make not found on PATH ; exit 1; }
-	source $(HOME)/.bashrc
-	set -ue
-	complete -p make &>/dev/null && {
-		touch $@
-		exit
-	} || :
+FlagTargets += makestuff
+$(Flag)/makestuff:
+	@# Support make and autocompletion for it
 	bash -lic 'complete -p | grep -q _make &>/dev/null' && {
 		touch $@
 		exit 0

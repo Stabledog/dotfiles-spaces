@@ -2,8 +2,8 @@ inc/jumpstart.mk: ;
 
 jumpstart: $(Flag)/jumpstart
 FlagTargets += jumpstart
-$(Flag)/jumpstart: $(Flag)/.init
-	@set -ue
+$(Flag)/jumpstart:
+	@# Install jumpstart
 	$(ISBB) || {
 		set -x
 		bash -lic '[[ -n "$$JumpstartVersion" ]]' || {
