@@ -134,10 +134,6 @@ mega-wsl: \
 	vimsane
 	echo "Ok: $@"
 
-vimsane: $(Flag)/vimsane
-
-
-
 
 
 vbase: $(Flag)/vbase
@@ -180,17 +176,6 @@ $(Flag)/makestuff:
 	}
 	touch $@
 
-$(Flag)/vimsane:
-	@set -ue
-	set -x
-	mkdir -p $(HOME)/tmp
-	cd $(HOME)/tmp
-	[[ -d vimsane ]] || {
-		git clone bbgithub:sanekits/vimsane
-	}
-	cd vimsane
-	make setup
-	touch $@
 
 vsweb-settings: $(Flag)/vsweb-settings
 $(Flag)/vsweb-settings: $(Finit) Makefile
