@@ -1,11 +1,19 @@
 #!/bin/bash
+# This script exploits the DevX Spaces + Github Codespaces default behavior:
+#   "If there's no install script in your dotfiles, we symlink any files that
+#    start with '.'"
+#
+# We don't really want to have a static set of auto-linked dotfiles.  So we
+# offer this one exception:  ~/.dotmake -> [dotfiles-path]/.dotmake, which
+# can then be manually invoked from anywhere to zap the user settings.
+#
 set -ue
-set -x
+#set -x
 export ORGDIR=$PWD
 
 DOTFILES=$(dirname $(readlink -f $0))
 
 cd $DOTFILES
 
-make -f ./Makefile "$@"
+make -f ./Makefile ORGDIR=${ORGDIR} "$@"
 
