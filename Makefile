@@ -59,6 +59,9 @@ Config: .cfg.top
 	ORGDIR="$(ORGDIR)"
 
 	EOF
+.cfg-export:
+	@# Add export decl to all config values:
+	$(MAKE) -f $(Makefile) Config | awk '/^[^#]+/ {print "export " $$0}'
 
 
 $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
@@ -86,7 +89,7 @@ $(Flag)/.init:
 	echo "$(HOME)/dotfiles" >> $(HOME)/.tox-index
 	touch $@
 
-shell:
+
 mega-devxspaces: \
 	makestuff \
 	vbase \
@@ -110,15 +113,11 @@ mega-wsl: \
 
 mega: $(Megadeps)
 
-shell:
-	@set -ue   # Helper shell for maintaining the dotfiles repo
-	cd $(absdir)
-	Ps1Tail=dotshell bash
 
-clean:
-	@set -ue
+clean: .top-clean
+.top-clean:
+	@ # Remove stuff to try again:
 	rm $(absdir).env.mk $(absdir).metatargets.mk || :
 	[[ -d $(Flag) ]] && rm $(Flag)/* &>/dev/null || :
-
-
+	true
 
