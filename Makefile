@@ -103,7 +103,10 @@ $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 		 esac
 	} > $@
 
+# Targets which make entries in the $(Flag) directory should depend on _flag:
+_flag: $(Flag)/.init
 $(FlagTargets): $(Flag)/.init
+.PHONY: _flag
 $(Flag)/.init:
 	mkdir -p $(Flag)
 	echo "$(Flag) 1" >> $(HOME)/.tox-index

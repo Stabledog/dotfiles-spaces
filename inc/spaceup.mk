@@ -3,7 +3,7 @@ inc/spaceup.mk:  ;
 spaceup: $(Flag)/spaceup
 .PHONY: spaceup
 FlagTargets += spaceup
-$(Flag)/spaceup:
+$(Flag)/spaceup: _flag
 	@set -ue # Spaces-specific helpers
 	echo Making $@:
 	bash -lic 'test -n "$$SPACEUP" && true || false; exit' && { touch $@; exit 0; } || {
