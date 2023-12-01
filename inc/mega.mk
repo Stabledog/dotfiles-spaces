@@ -6,6 +6,7 @@ mega-devxspaces: \
 	spaceup \
 	vscodevim \
 	vsweb-settings \
+	vsweb-colorthemes \
 	app-setup \
 	vimsane
 
