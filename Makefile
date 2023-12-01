@@ -38,7 +38,7 @@ SHELL=/bin/bash
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-print-directory
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-Remake = make $(MAKEFLAGS) -f $(absdir)Makefile
+Makefile = $(absdir)Makefile
 .DEFAULT_GOAL := Config
 Makefile: ;
 
@@ -53,11 +53,12 @@ GhPubOrg = https://github.com/Stabledog
 
 Flag := $(HOME)/.flag-dotfiles
 
-
-
 # Individual feature targets have their own makefiles:
 include $(shell ls inc/*.mk)
 
+
+# Top-level config:
+#  (Other config targets should cite this as a dependency to get nice output ordering)
 Config: .cfg.top
 .PHONY: Config
 FlagTargets += .cfg.top
@@ -73,10 +74,11 @@ FlagTargets += .cfg.top
 	DOTFILES_SYS=$(DOTFILES_SYS)
 	GITHUB_USER=$(GITHUB_USER)
 	ISBB=$(ISBB)
+	Flag=$(Flag)
+	Flags="$(shell ls $(Flag))"
 	VscodeSettingsOrg=$(VscodeSettingsOrg)
 	VscodeUserDir=$(VscodeUserDir)
 	GhPubOrg=$(GhPubOrg)
-	Remake=$(Remake)
 	AppSetupHooks="$(AppSetupHooks)"
 	Megadeps="$(Megadeps)"
 	ORGDIR="$(ORGDIR)"
@@ -141,16 +143,6 @@ $(Flag)/vscodevim:
 	touch $@
 
 
-spaceup: $(Flag)/spaceup
-FlagTargets += spaceup
-$(Flag)/spaceup:
-	@set -ue # Spaces-specific helpers
-	set -x
-	echo Making $@:
-	bash -lic 'test -n "$$SPACEUP" && true || false; exit' && { touch $@; exit 0; } || {
-		echo 'source $${HOME}/dotfiles/dot/spaceup.bashrc # Added by dotfiles/Makefile:spaceup' >> $(HOME)/.bashrc
-	}
-	touch $@
 
 vbase: $(Flag)/vbase
 FlagTargets += vbase
@@ -239,7 +231,7 @@ $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 		echo "$$PWD 1" >> $(HOME)/.tox-index
 	}
 	cd $(absdir)
-	$(Remake) $(Flag)/vsweb-colorthemes
+	$(MAKE) -f $(Makefile) $(Flag)/vsweb-colorthemes
 
 	touch $@
 
