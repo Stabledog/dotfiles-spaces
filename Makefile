@@ -30,6 +30,14 @@ GhPubOrg = https://github.com/Stabledog
 
 Flag := $(HOME)/.flag-dotfiles
 
+# Targets which touch a flag in $(Flag) should depend on $(Finit)
+Finit=$(Flag)/.init
+$(Flag)/.init:
+	mkdir -p $(Flag)
+	echo "$(Flag) 1" >> $(HOME)/.tox-index
+	echo "$(HOME)/dotfiles" >> $(HOME)/.tox-index
+	touch $@
+
 # Individual feature targets have their own makefiles:
 include $(shell ls inc/*.mk)
 
@@ -81,13 +89,6 @@ $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 		 esac
 	} > $@
 
-# Targets which touch a flag in $(Flag) should depend on $(Finit)
-Finit=$(Flag)/.init
-$(Flag)/.init:
-	mkdir -p $(Flag)
-	echo "$(Flag) 1" >> $(HOME)/.tox-index
-	echo "$(HOME)/dotfiles" >> $(HOME)/.tox-index
-	touch $@
 
 
 mega-devxspaces: \
