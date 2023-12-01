@@ -1,6 +1,6 @@
 inc/dotshell.mk: ;
 
-shell:
+dotshell shell:
 	@ # Helper shell for maintaining the dotfiles repo
 	cd $(absdir)
 	source <( $(MAKE) -f $(Makefile) .cfg-export )
