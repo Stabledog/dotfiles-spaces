@@ -9,3 +9,4 @@ $(Flag)/dotmake: $(Finit) $(Flag)/makestuff
 		exit 0
 	}
 	echo 'complete -F _make $(HOME)/.dotmake # Added by inc/dotmake.mk' >> $(HOME)/.bashrc
+	touch $@
