@@ -24,7 +24,5 @@ $(Flag)/vsweb-settings: $(Finit)
 	cd ./User/snippets && {
 		echo "$$PWD 1" >> $(HOME)/.tox-index
 	}
-	cd $(absdir)
-	$(MAKE) -f $(Makefile) $(Flag)/vsweb-colorthemes
 
 	touch $@

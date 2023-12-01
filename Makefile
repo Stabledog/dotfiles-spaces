@@ -138,15 +138,6 @@ mega-wsl: \
 
 
 
-
-$(Flag)/vsweb-colorthemes:
-	@set -ue
-	set -x
-	$(Code) --install-extension ahmadawais.shades-of-purple
-	$(Code) --install-extension catppuccin.catppuccin-vsc
-	touch $@
-
-
 # - - - - - app-setup - - - - -
 app-setup: $(Flag)/app-setup
 AppSetupHooks = $(shell \
