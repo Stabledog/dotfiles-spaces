@@ -137,12 +137,6 @@ mega-wsl: \
 vimsane: $(Flag)/vimsane
 
 
-vscodevim: $(Flag)/vscodevim
-$(Flag)/vscodevim:
-	@set -ue
-	set -x
-	$(Code) --install-extension vscodevim.vim
-	touch $@
 
 
 
