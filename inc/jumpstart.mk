@@ -1,8 +1,7 @@
 inc/jumpstart.mk: ;
 
 jumpstart: $(Flag)/jumpstart
-FlagTargets += jumpstart
-$(Flag)/jumpstart:
+$(Flag)/jumpstart: $(Finit)
 	@# Install jumpstart
 	$(ISBB) || {
 		set -x
@@ -19,7 +18,6 @@ $(Flag)/jumpstart:
 	touch $@
 
 Config: .cfg.jumpstart
-.PHONY: .cfg.jumpstart
 .cfg.jumpstart: .cfg.top
 	@echo '#  inc/jumpstart.mk:'
 	bash -lic 'echo JumpstartVersion=$${JumpstartVersion}'

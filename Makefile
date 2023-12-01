@@ -37,6 +37,7 @@ SHELL=/bin/bash
 .ONESHELL:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-print-directory
+SHELLFLAGS="-uec"
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 Makefile = $(absdir)Makefile
 .DEFAULT_GOAL := Config
@@ -61,8 +62,7 @@ include $(shell ls inc/*.mk)
 #  (Other config targets should cite this as a dependency to get nice output ordering)
 Config: .cfg.top
 .PHONY: Config
-FlagTargets += .cfg.top
-.cfg.top:
+.cfg.top: $(Finit)
 	@set -ue
 
 	cat <<-EOF
@@ -103,10 +103,8 @@ $(absdir).metatargets.mk: $(absdir)Makefile $(absdir).env.mk
 		 esac
 	} > $@
 
-# Targets which make entries in the $(Flag) directory should depend on _flag:
-_flag: $(Flag)/.init
-$(FlagTargets): $(Flag)/.init
-.PHONY: _flag
+# Targets which touch a flag in $(Flag) should depend on $(Finit)
+Finit=$(Flag)/.init
 $(Flag)/.init:
 	mkdir -p $(Flag)
 	echo "$(Flag) 1" >> $(HOME)/.tox-index
@@ -138,7 +136,6 @@ vimsane: $(Flag)/vimsane
 
 
 vscodevim: $(Flag)/vscodevim
-FlagTargets += vscodevim
 $(Flag)/vscodevim:
 	@set -ue
 	set -x
@@ -148,7 +145,6 @@ $(Flag)/vscodevim:
 
 
 vbase: $(Flag)/vbase
-FlagTargets += vbase
 $(Flag)/vbase: $(Flag)/jumpstart
 	@set -ue
 	set -x
@@ -167,7 +163,6 @@ $(Flag)/vbase: $(Flag)/jumpstart
 	touch $@
 
 makestuff: $(Flag)/makestuff
-FlagTargets += makestuff
 $(Flag)/makestuff:
 	@# Support make and autocompletion for it
 	bash -lic 'complete -p | grep -q _make &>/dev/null' && {
@@ -202,7 +197,6 @@ $(Flag)/vimsane:
 	touch $@
 
 vsweb-settings: $(Flag)/vsweb-settings
-FlagTargets += vsweb-settings
 $(Flag)/vsweb-settings: $(Flag)/.init Makefile
 	@set -ue # Clone user settings for working with the web edition
 	set -x
@@ -242,7 +236,6 @@ $(Flag)/vsweb-colorthemes:
 
 # - - - - - app-setup - - - - -
 app-setup: $(Flag)/app-setup
-FlagTargets += app-setup
 AppSetupHooks = $(shell \
 				for xroot in $$(ls -d /*/.git 2>/dev/null | sed 's|/.git||'); do \
 					for makefile in $$(ls $${xroot}{/me,}/{.dotfiles,dotfiles,spaces-dotfiles}.mk 2>/dev/null); do \

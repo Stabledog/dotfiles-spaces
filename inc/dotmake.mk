@@ -1,11 +1,10 @@
 inc/dotmake.mk: ;
 
 dotmake: $(Flag)/dotmake
-FlagTargets += dotmake
-$(Flag)/dotmake: $(Flag)/makestuff
+$(Flag)/dotmake: $(Finit) $(Flag)/makestuff
 	@# Setup autocomplete for ~/.dotmake
 	set -x
-	bash -lic 'complete -p | grep -E "\.dotmake"' &>/dev/null && {
+	bash -lic 'complete -p' | grep -qE "\.dotmake"  && {
 		touch $@;
 		exit 0
 	}
