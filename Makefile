@@ -37,11 +37,13 @@ SHELL=/bin/bash
 .ONESHELL:
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-print-directory
-SHELLFLAGS="-uec"
+.SHELLFLAGS= -uec
 absdir := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 Makefile = $(absdir)Makefile
 .DEFAULT_GOAL := Config
 Makefile: ;
+
+
 
 
 # Create+include .env.mk and .metatargets.mk:
@@ -67,7 +69,7 @@ Config: .cfg.top
 
 	cat <<-EOF
 	#  $(absdir)Makefile:
-	Makefile=$(absdir)/Makefile
+	Makefile=$(Makefile)
 	Code=$(Code)
 	absdir=$(absdir)
 	User=$(User)
