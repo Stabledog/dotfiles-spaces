@@ -197,7 +197,7 @@ $(Flag)/vimsane:
 	touch $@
 
 vsweb-settings: $(Flag)/vsweb-settings
-$(Flag)/vsweb-settings: $(Flag)/.init Makefile
+$(Flag)/vsweb-settings: $(Finit) Makefile
 	@set -ue # Clone user settings for working with the web edition
 	set -x
 	# (re)-build the vscode settings dir for user in ~/.local/share/...
