@@ -29,9 +29,13 @@ do_detect() {
     esac
 
     ISBB=false
-    curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | grep -q '301 Moved Permanently' 2>/dev/null && {
-        ISBB=true
-    }
+    bbresponse=$( curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
+    case $bbresponse in
+        301*)
+            ISBB=true ;;
+        400*)
+            ISBB=false ;;
+    esac
 
 
     cat <<-EOF

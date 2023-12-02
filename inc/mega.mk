@@ -15,13 +15,15 @@ mega-codespaces: \
 	vbase
 	echo "Ok: $@"
 
+mega-wsl-bb: \
+	vimsane
+	echo "Ok: $@"
+
 mega-wsl: \
 	vimsane
 	echo "Ok: $@"
 
-
-mega: $(Flag)/mega
-$(Flag)/mega: $(Finit)
+.mega-detect:
 	@# Add our stuff to the metatargets.mk stuff:
 	source $(absdir).env.mk
 	inner_target=null
@@ -33,13 +35,22 @@ $(Flag)/mega: $(Finit)
 			inner_target=mega-devxspaces ;;
 
 		wsl)
-			inner_target=mega-wsl ;;
-
+			if $(ISBB); then
+				inner_target=mega-wslbb
+			else
+				inner_target=mega-wsl
+			fi ;;
 		*)
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
-	echo "mega target routes to target $$inner_target:" >&2
-	$(MAKE) -f $(Makefile) $$inner_target
+	echo mega_target=$$inner_target
+	#echo "mega target routes to target $$inner_target" >&2
+
+mega: $(Flag)/mega
+$(Flag)/mega: $(Finit)
+	@# Add our stuff to the metatargets.mk stuff:
+	source <( $(MAKE) -f $(Makefile) .mega-detect )
+	$(MAKE) -f $(Makefile) $$mega_target
 	touch $@
 
 
