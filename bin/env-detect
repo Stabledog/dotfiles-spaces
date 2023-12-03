@@ -19,6 +19,7 @@ do_detect() {
     case $uname_x in
         *WSL2*) DOTFILES_SYS=wsl;;
         *codespaces*) DOTFILES_SYS=codespaces;;
+        *MINGW64_NT*) DOTFILES_SYS=gitbash;;
         *)
             grep -q code-server-init /proc/1/cmdline &>/dev/null && {
                 DOTFILES_SYS=devxspaces
