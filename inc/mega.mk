@@ -41,7 +41,7 @@ mega-wsl: \
 
 		wsl)
 			if $(ISBB); then
-				inner_target=mega-wslbb
+				inner_target=mega-wsl-bb
 			else
 				inner_target=mega-wsl
 			fi ;;
