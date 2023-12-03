@@ -3,6 +3,7 @@ inc/mega.mk: ;
 mega-devxspaces: \
 	makestuff \
 	my-home \
+	bin-pub \
 	vbase \
 	spaceup \
 	vscodevim \
@@ -13,7 +14,7 @@ mega-devxspaces: \
 
 mega-codespaces: \
 	makestuff \
-	vbase \
+	vbase
 	echo "Ok: $@"
 
 mega-wsl-bb: \
