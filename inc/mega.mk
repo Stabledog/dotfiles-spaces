@@ -2,6 +2,8 @@ inc/mega.mk: ;
 
 mega-devxspaces: \
 	makestuff \
+	my-home \
+	bin-pub \
 	vbase \
 	spaceup \
 	vscodevim \
@@ -16,6 +18,9 @@ mega-codespaces: \
 	echo "Ok: $@"
 
 mega-wsl-bb: \
+	app-setup \
+	my-home \
+	bin-pub \
 	vimsane
 	echo "Ok: $@"
 
@@ -36,7 +41,7 @@ mega-wsl: \
 
 		wsl)
 			if $(ISBB); then
-				inner_target=mega-wslbb
+				inner_target=mega-wsl-bb
 			else
 				inner_target=mega-wsl
 			fi ;;
