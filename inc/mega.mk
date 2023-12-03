@@ -20,6 +20,7 @@ mega-codespaces: \
 mega-wsl-bb: \
 	app-setup \
 	my-home \
+	bin-pub \
 	vimsane
 	echo "Ok: $@"
 
