@@ -28,6 +28,13 @@ mega-wsl: \
 	vimsane
 	echo "Ok: $@"
 
+mega-gitbash:
+	echo "Ok: $@"
+
+
+mega-gitbash-bb:
+	echo "Ok: $@"
+
 .mega-detect:
 	@# Add our stuff to the metatargets.mk stuff:
 	source $(absdir).env.mk
@@ -45,6 +52,13 @@ mega-wsl: \
 			else
 				inner_target=mega-wsl
 			fi ;;
+
+		gitbash)
+			$(ISBB) && {
+				inner_target=mega-gitbash-bb
+			} || {
+				inner_target=mega-gitbash
+			} ;;
 		*)
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
@@ -53,8 +67,12 @@ mega-wsl: \
 
 mega: $(Flag)/mega
 $(Flag)/mega: $(Finit)
-	@# Add our stuff to the metatargets.mk stuff:
-	source <( $(MAKE) -f $(Makefile) .mega-detect )
+	@# (Note: Git-bash chokes on something like "source <(output-of-command)", so we
+	# have this ugly tmp file):
+	tmpfile=$(VHOME)/mega-tmp-${@F}-out
+	$(MAKE) -f $(Makefile) .mega-detect > $$tmpfile
+	source $$tmpfile
+	rm $$tmpfile
 	$(MAKE) -f $(Makefile) $$mega_target
 	touch $@
 
