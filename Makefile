@@ -89,25 +89,4 @@ clean: .top-clean
 	[[ -d $(Flag) ]] && rm $(Flag)/* &>/dev/null || :
 	true
 
-stub:
-	@echo "Stub target"
-	cat <<-EOF
-	# SHELL=$(SHELL)
-	# Makefile=$(Makefile)
-	# Code=$(Code)
-	# absdir=$(absdir)
-	# User=$(User)
-	# DOTFILES_SYS=$(DOTFILES_SYS)
-	# GITHUB_USER=$(GITHUB_USER)
-	# ISBB=$(ISBB)
-	# Flag=$(Flag)
-	# Flags="$(shell ls $(Flag))"
-	# VscodeSettingsOrg=$(VscodeSettingsOrg)
-	# VscodeUserDir=$(VscodeUserDir)
-	# GhPubOrg=$(GhPubOrg)
-	# ORGDIR="$(ORGDIR)
-	# USER=$(USER)
-	# VHOME=$(VHOME)
-	EOF
-
 
