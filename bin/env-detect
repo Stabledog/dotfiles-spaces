@@ -68,12 +68,12 @@ do_detect() {
     } || :
 
     # Is jumpstart available?
-    bash -ic 'jumpstart --version' 2>/dev/null | grep -q version && {
+    bash -ic 'jumpstart --version; exit' 2>/dev/null | grep -q version && {
         PKGMGRS+=(jumpstart)
     } || :
 
     # Is shpm available?
-    bash -ic 'shpm --version' 2>/dev/null | grep -Eq '[0-9]*\.[0-9]*\.' && {
+    bash -ic 'shpm --version; exit' 2>/dev/null | grep -Eq '[0-9]*\.[0-9]*\.' && {
         PKGMGRS+=(shpm)
     } || :
 
