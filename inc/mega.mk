@@ -62,7 +62,11 @@ mega-gitbash-bb:
 		*)
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
-	echo mega_target=$$inner_target
+	$(ISDOCKER) && {
+		echo mega_target=$${inner_target}-docker
+	} || {
+		echo mega_target=$$inner_target
+	}
 
 
 
@@ -71,7 +75,7 @@ $(Flag)/mega: $(Finit)
 	@# Note: Git-bash chokes on something like "source <(output-of-command)", so we
 	# have this ugly hack instead:
 	tmpfile=$(HOME)/.tmp-mega-env
-	$(MAKE) -f $(Makefile) .mega-detect > $$tmpfile
+	make --debug=none -f $(Makefile) .mega-detect > $$tmpfile
 	echo "sourcing $$tmpfile:" >&2
 	source $$tmpfile
 	$(MAKE) -f $(Makefile) $$mega_target
