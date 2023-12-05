@@ -36,6 +36,13 @@ do_detect() {
             ;;
     esac
 
+    ISDOCKER=false
+    [[ -f /.dockerenv ]] && {
+        ISDOCKER=true
+    } || {
+        grep -Eq '^0::\/docker' /proc/1/cgroup && ISDOCKER=true || :
+    }
+
     ISBB=false
     bbresponse=$( curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
     case $bbresponse in
@@ -87,6 +94,7 @@ do_detect() {
     Code="$(which code code-server 2>/dev/null | head -n 1)"
     User=${user_detected}
     ISBB=${ISBB}
+    ISDOCKER=${ISDOCKER}
 EOF
 
     printf "    PKG_MANAGERS='";
