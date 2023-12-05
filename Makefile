@@ -63,6 +63,7 @@ Config: .cfg.top
 	DOTFILES_SYS=$(DOTFILES_SYS)
 	GITHUB_USER=$(GITHUB_USER)
 	ISBB=$(ISBB)
+	ISDOCKER=$(ISDOCKER)
 	Flag=$(Flag)
 	Flags="$(shell ls $(Flag))"
 	VscodeSettingsOrg=$(VscodeSettingsOrg)
