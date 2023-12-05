@@ -37,11 +37,13 @@ do_detect() {
     esac
 
     ISDOCKER=false
-    [[ -f /.dockerenv ]] && {
+    if [[ -f /.dockerenv ]]; then
         ISDOCKER=true
-    } || {
-        grep -Eq '^0::\/docker' /proc/1/cgroup && ISDOCKER=true || :
-    }
+    elif grep -Eq '^0::\/docker' /proc/1/cgroup; then
+        ISDOCKER=true
+    else
+        :
+    fi
 
     ISBB=false
     bbresponse=$( curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )

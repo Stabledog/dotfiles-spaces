@@ -24,9 +24,15 @@ mega-wsl-bb: \
 	vimsane
 	echo "Ok: $@"
 
+mega-wsl-bb-docker:  \
+	app-setup \
+	vbase
+	echo "Ok: $@"
+
 mega-wsl: \
 	vimsane
 	echo "Ok: $@"
+
 
 mega-gitbash:
 	echo "Ok: $@"
