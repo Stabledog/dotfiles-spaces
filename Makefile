@@ -81,6 +81,9 @@ $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
 	$< > $@
 
 
+pull:
+	@cd $(absdir)
+	git pull
 
 clean: .top-clean
 .top-clean:
