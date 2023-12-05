@@ -63,15 +63,17 @@ mega-gitbash-bb:
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
 	echo mega_target=$$inner_target
-	#echo "mega target routes to target $$inner_target" >&2
+
 
 
 mega: $(Flag)/mega
 $(Flag)/mega: $(Finit)
 	@# Note: Git-bash chokes on something like "source <(output-of-command)", so we
 	# have this ugly hack instead:
-	$(MAKE) -f $(Makefile) .mega-detect | {
-		source /dev/stdin
-		$(MAKE) -f $(Makefile) $$mega_target
-	}
+	tmpfile=$(HOME)/.tmp-mega-env
+	$(MAKE) -f $(Makefile) .mega-detect > $$tmpfile
+	echo "sourcing $$tmpfile:" >&2
+	source $$tmpfile
+	$(MAKE) -f $(Makefile) $$mega_target
+	rm $$tmpfile
 	touch $@
