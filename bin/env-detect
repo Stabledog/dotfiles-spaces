@@ -88,11 +88,12 @@ do_detect() {
     User=${user_detected}
     ISBB=${ISBB}
 EOF
-    printf "    PKG_MANAGERS=";
+    
+    printf "    PKG_MANAGERS='";
     [[ ${#PKGMGRS[@]} -gt 0 ]] && {
-        printf '%s ' ${PKGMGRS[@]}
+        printf '%s ' "${PKGMGRS[@]}"
     } || :
-    printf '\n'
+    printf "'\n"
 }
 
 

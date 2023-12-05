@@ -12,5 +12,5 @@ Config: .cfg-pkgmgrs
 .cfg-pkgmgrs:
 	@cat <<-EOF
 	#  inc/pkgmgrs.mk:
-	PKG_MANAGERS="$(PKG_MANAGERS)"
+	PKG_MANAGERS=$(PKG_MANAGERS)
 	EOF
