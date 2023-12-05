@@ -6,6 +6,7 @@
 
 scriptName="$(readlink -f "$0")"
 scriptDir=$(command dirname -- "${scriptName}")
+set -ue
 
 die() {
     builtin echo "ERROR($(basename ${scriptName})): $*" >&2
@@ -16,10 +17,16 @@ do_detect() {
 
     local uname_x=$(uname -a)
     DOTFILES_SYS=
+    PKGMGRS=( )
+    local  user_detected=$(whoami)
     case $uname_x in
-        *WSL2*) DOTFILES_SYS=wsl;;
+        *WSL2*)
+            DOTFILES_SYS=wsl;;
         *codespaces*) DOTFILES_SYS=codespaces;;
-        *MINGW64_NT*) DOTFILES_SYS=gitbash;;
+        *MINGW64_NT*)
+            DOTFILES_SYS=gitbash
+            user_detected=$( basename ${HOME} )
+            ;;
         *)
             grep -q code-server-init /proc/1/cmdline &>/dev/null && {
                 DOTFILES_SYS=devxspaces
@@ -38,17 +45,38 @@ do_detect() {
             ISBB=false ;;
     esac
 
+    # Is apt-get available?
+    AptGetPath=$(PATH="/opt/bb/bin:$PATH" which apt-get 2>/dev/null | head -n 1)
+    [[ -n "$AptGetPath" ]] && {
+        PKGMGRS+=(apt-get)
+    } | :
+    # Is choco available?
+    choco --version &>/dev/null && {
+        PKGMGRS+=(choco)
+    } || :
+
+    # Is yum available?
+    yum --version &>/dev/null && {
+        PKGMGRS+=(yum)
+    } || :
 
     cat <<-EOF
     DOTFILES_SYS=$DOTFILES_SYS
     Code="$(which code code-server 2>/dev/null | head -n 1)"
-    User=$(whoami)
+    User=${user_detected}
     ISBB=${ISBB}
 EOF
+    printf "    PKG_MANAGERS=";
+    [[ ${#PKGMGRS[@]} -gt 0 ]] && {
+        printf '%s ' ${PKGMGRS[@]}
+    } || :
+    printf '\n'
 }
 
 
+set +u
 [[ -z ${sourceMe} ]] && {
+    set -u
     do_detect "$@"
     builtin exit
 }
