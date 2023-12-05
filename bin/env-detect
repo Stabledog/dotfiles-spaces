@@ -17,7 +17,7 @@ do_detect() {
 
     local uname_x=$(uname -a)
     DOTFILES_SYS=
-    PKGMGRS=( )
+    PKGMGRS=()
     local  user_detected=$(whoami)
     case $uname_x in
         *WSL2*)
@@ -47,9 +47,11 @@ do_detect() {
 
     # Is apt-get available?
     AptGetPath=$(PATH="/opt/bb/bin:$PATH" which apt-get 2>/dev/null | head -n 1)
+
     [[ -n "$AptGetPath" ]] && {
+
         PKGMGRS+=(apt-get)
-    } | :
+    } || :
     # Is choco available?
     choco --version &>/dev/null && {
         PKGMGRS+=(choco)
