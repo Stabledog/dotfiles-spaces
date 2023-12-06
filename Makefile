@@ -18,7 +18,7 @@ Makefile = $(abspath $(absdir)Makefile)
 .DEFAULT_GOAL := Config
 Makefile: ;
 
-VHOME := $(abspath $(absdir)..)
+VHOME := $(shell $(absdir)bin/get-vhome)
 # ^^ Warning: don't use HOME in makefiles, as it expands badly on Windows/git-bash
 
 
