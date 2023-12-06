@@ -43,6 +43,7 @@ mega-gitbash-bb:
 
 .mega-detect:
 	@# Add our stuff to the metatargets.mk stuff:
+
 	source $(absdir).env.mk
 	inner_target=null
 	case "$(DOTFILES_SYS)" in
@@ -73,7 +74,7 @@ mega-gitbash-bb:
 		*)
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
-
+	echo mega_target=$$inner_target
 
 
 mega: $(Flag)/mega
@@ -81,7 +82,7 @@ $(Flag)/mega: $(Finit)
 	@# Note: Git-bash chokes on something like "source <(output-of-command)", so we
 	# have this ugly hack instead:
 	tmpfile=$(HOME)/.tmp-mega-env
-	make --debug=none -f $(Makefile) .mega-detect > $$tmpfile
+	MAKEFLAGS= make -s -f $(Makefile) .mega-detect > $$tmpfile
 	echo "sourcing $$tmpfile:" >&2
 	source $$tmpfile
 	$(MAKE) -f $(Makefile) $$mega_target
