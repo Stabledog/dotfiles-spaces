@@ -15,6 +15,7 @@ MAKEFLAGS += --no-builtin-rules --no-print-directory
 .SHELLFLAGS= -uec
 absdir := $(abspath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))/
 Makefile = $(abspath $(absdir)Makefile)
+Incdir := $(absdir)inc
 .DEFAULT_GOAL := Config
 Makefile: ;
 

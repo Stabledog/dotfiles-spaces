@@ -1,6 +1,7 @@
 inc/mega.mk: ;
 
 mega-devxspaces: \
+	bb-npmrc \
 	makestuff \
 	my-home \
 	bin-pub \
