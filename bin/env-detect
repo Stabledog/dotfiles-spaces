@@ -39,7 +39,7 @@ do_detect() {
     ISDOCKER=false
     if [[ -f /.dockerenv ]]; then
         ISDOCKER=true
-    elif grep -Eq '^0::\/docker' /proc/1/cgroup; then
+    elif grep -Eq '^0::\/docker' /proc/1/cgroup 2>/dev/null; then
         ISDOCKER=true
     else
         :

@@ -37,7 +37,7 @@ Flag := $(VHOME)/.flag-dotfiles
 # Targets which touch a flag in $(Flag) should depend on $(Finit)
 Finit=$(Flag)/.init
 $(Flag)/.init:
-	mkdir -p $(Flag)
+	@mkdir -p $(Flag)
 	echo "$(Flag) 1" >> $(VHOME)/.tox-index
 	echo "$(VHOME)/dotfiles" >> $(VHOME)/.tox-index
 	touch $@
