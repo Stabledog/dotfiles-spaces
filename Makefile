@@ -60,6 +60,7 @@ Config: .cfg.top
 	Code=$(Code)
 	absdir=$(absdir)
 	User=$(User)
+	VHOME=$(VHOME)
 	DOTFILES_SYS=$(DOTFILES_SYS)
 	GITHUB_USER=$(GITHUB_USER)
 	ISBB=$(ISBB)
