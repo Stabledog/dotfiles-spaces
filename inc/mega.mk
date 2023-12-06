@@ -57,7 +57,12 @@ mega-gitbash-bb:
 				inner_target=mega-wsl-bb
 			else
 				inner_target=mega-wsl
-			fi ;;
+			fi
+			$(ISDOCKER) && {
+				inner_target=$${inner_target}-docker
+			}
+			;;
+
 
 		gitbash)
 			$(ISBB) && {
@@ -68,11 +73,6 @@ mega-gitbash-bb:
 		*)
 			echo "ERROR: Bad DOTFILES_SYS value: $(DOTFILES_SYS)" >&2; exit 19  ;;
 	esac
-	$(ISDOCKER) && {
-		echo mega_target=$${inner_target}-docker
-	} || {
-		echo mega_target=$$inner_target
-	}
 
 
 
