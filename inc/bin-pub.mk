@@ -1,7 +1,6 @@
-inc/bin-pubmk: ;
+inc/bin-pub.mk: ;
 
 $(HOME)/bin/.git/.init:
-	$(ISBB) || exit 29
 	git clone https://github.com/Stabledog/bin-pub $(HOME)/bin -o ghmine
 	touch $@
 
