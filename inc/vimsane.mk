@@ -5,11 +5,13 @@ $(Flag)/vimsane: $(Finit)
 	@ # Install vimsane config for vim
 	mkdir -p $(HOME)/tmp
 	cd $(HOME)/tmp
-	[[ -d vimsane ]] || {
-		git clone bbgithub:sanekits/vimsane
+	[[ -d vimsane.tmp ]] && rm -rf ./vimsane.tmp
+	clone_url=https://github.com/sanekits/vimsane
+	$(ISBB) && clone_url=bbgithub:sanekits/vimsane
+	git clone $$clone_url ./vimsane.tmp
 	}
-	cd vimsane
+	cd ./vimsane.tmp
 	make setup
 	cd ..
-	rm -rf vimsane
+	rm -rf vimsane.tmp
 	touch $@
