@@ -1,20 +1,21 @@
 inc/vscode-settings.mk: ;
 
 
-$(Flag)/vscode-basic: $(Flag)/windows-env.sh
+$(Flag)/vscode-repo:
 	@# Target $@
 	# clone or update the Roaming/Code/User dir from github
-	source $(Flag)/windows-env.sh
-	cd $${APPDATA} || exit 21
-	cd ./Code/User || exit 23
+	cd $(VscodeUserDir) || exit 21
 	[[ -d ./.git ]] || {
 		git pull
 	} || {
-
-		git clone
+		git clone $(VscodeSettingsOrg)/vscode.settings tmp$$$$
+		mv tmp$$$$/.git ./
+		rm -rf tmp$$$$
 	}
+	touch $@
 
-$(Flag)/vscode-settings:  $(Finit) $(Flag)/vscode-basic
+$(Flag)/vscode-settings:  $(Finit) $(Flag)/vscode-repo
+	exit 99 # Unfinished target
 
 
 vscode-settings: $(Flag)/vscode-settings
