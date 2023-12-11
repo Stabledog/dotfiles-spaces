@@ -10,7 +10,7 @@ $(Flag)/windows-env.sh:
 	cmd="$$(which cmd.exe)"
 	cd /mnt/c
 	"$$cmd" /C set | grep -E '(USERNAME|USERPROFILE|APPDATA|LOCALAPPDATA)' > $$tmpfile
-	<$$tmpfile tr '\\' '/' | sed -E -e 's,C\:,/mnt/c,' >$@
+	<$$tmpfile tr '\\' '/' | tr -d '\r' | sed -E -e 's,C\:,/mnt/c,' >$@
 
 	rm $$tmpfile
 
@@ -23,4 +23,3 @@ Config: .cfg-windows-env
 	}
 	cat $(Flag)/windows-env.sh
 
-x:
