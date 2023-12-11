@@ -31,7 +31,8 @@ mega-wsl-bb-docker:  \
 	echo "Ok: $@"
 
 mega-wsl: \
-	vimsane
+	vimsane \
+	vscode-sttings
 	echo "Ok: $@"
 
 

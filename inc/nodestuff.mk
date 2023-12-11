@@ -1,4 +1,4 @@
-nodestuff.mk: ;
+inc/nodestuff.mk: ;
 
 .bb-npmrc:
 	@cat <<-EOF
