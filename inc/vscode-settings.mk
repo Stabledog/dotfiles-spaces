@@ -6,13 +6,22 @@ $(Flag)/vscode-settings-branchselect:
 	# Priority 1: if there's a branch that matches our machine name?
 	set -x
 	cd $(VscodeUserDir)
-	host=$$(hostname | tr 'A-Z' 'a-z')
+	host=$$(hostname 2>/dev/null | tr 'A-Z' 'a-z')
 	[[ -n "$$host" ]] && {
 		git checkout "$$host" && {
 			touch $@
 			exit 0
 		} || :
-	} || :
+	} || {
+		case "$(DOTFILES_SYS)" in
+			devxspaces) targetbranch=devxspaces ;;
+			*) targetbranch=_reference_ ;;
+		esac
+		[[ -n "$$targetbranch" ]] && {
+			git stash || :
+			git checkout "origin/$$targetbranch"
+		}
+	}
 	touch $@
 
 
