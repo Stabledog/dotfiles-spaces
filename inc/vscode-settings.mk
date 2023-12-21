@@ -47,6 +47,7 @@ $(Flag)/vscode-repo:
 		mv tmp$$$$/.git ./
 		rm -rf tmp$$$$
 		git remote add ghmine $(GhPubOrg)/vscode.snippets.git
+		git reset --hard HEAD
 	}
 	echo "$$PWD 1" >> $(HOME)/.tox-index
 
