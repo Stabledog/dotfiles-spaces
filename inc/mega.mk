@@ -16,6 +16,8 @@ mega-devxspaces: \
 mega-codespaces: \
 	makestuff \
 	dotmake \
+	my-home \
+	bin-pub \
 	vbase
 	echo "Ok: $@"
 
