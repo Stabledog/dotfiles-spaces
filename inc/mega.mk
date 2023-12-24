@@ -15,6 +15,7 @@ mega-devxspaces: \
 
 mega-codespaces: \
 	makestuff \
+	dotmake \
 	vbase
 	echo "Ok: $@"
 
