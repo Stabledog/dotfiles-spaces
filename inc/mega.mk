@@ -1,24 +1,23 @@
 inc/mega.mk: ;
 
-mega-devxspaces: \
-	bb-npmrc \
+XspacesCommonDeps = \
 	makestuff \
 	my-home \
 	bin-pub \
 	vbase \
-	spaceup \
-	vscodevim \
+	spaceup  \
+	vscodevim 
+	
+mega-devxspaces: \
+	bb-npmrc \
+	$(XspacesCommonDeps) \
 	vsweb-settings \
 	vsweb-colorthemes \
 	app-setup \
 	vimsane
 
 mega-codespaces: \
-	makestuff \
-	dotmake \
-	my-home \
-	bin-pub \
-	vbase
+	$(XspacesCommonDeps) 
 	echo "Ok: $@"
 
 mega-wsl-bb: \
