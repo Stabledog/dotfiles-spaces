@@ -14,7 +14,7 @@ $(SshDir)/dotfile-setup $(sshDir)/dotfile-setup.pub: $(absdir)dot/dotfile-setup.
 	gpg --ignore-mdc-error -d $< | tar xv
 	touch dotfile-setup*
 
-$(SshDir)/config:
+$(SshDir)/config: | $(SshDir)
 	@# $@
 	cat <<-EOF > $@
 	# Added by $(absdir)inc/github.mk
@@ -23,3 +23,8 @@ $(SshDir)/config:
 		IdentityFile $(SshDir)/dotfile-setup 
 		IdentitiesOnly True
 	EOF
+	
+$(SshDir): 
+	@ # $@
+	mkdir -p $(HOME)/.ssh
+	chmod 700 $(HOME)/.ssh
