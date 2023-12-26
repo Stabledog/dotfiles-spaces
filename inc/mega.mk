@@ -5,7 +5,7 @@ XspacesCommonDeps = \
 	my-home \
 	bin-pub \
 	vbase \
-	spaceup 
+	spaceup
 
 mega-devxspaces: \
 	bb-npmrc \
@@ -17,6 +17,7 @@ mega-devxspaces: \
 	vimsane
 
 mega-codespaces: \
+	github \
 	$(XspacesCommonDeps)
 	echo "Ok: $@"
 
