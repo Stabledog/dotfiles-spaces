@@ -1,6 +1,6 @@
 inc/dotmake.mk: ;
 
-dotmake: $(HOME)/.dotmake $(Flag)/dotmake-autocomplete $(Flag)/dotmake-homelink
+dotmake: $(VHOME)/.dotmake $(Flag)/dotmake-autocomplete $(VHOME)/.dotfiles-spaces.d
 
 $(Flag)/dotmake-autocomplete: $(Finit) $(Flag)/makestuff
 	@# Setup autocomplete for ~/.dotmake
@@ -9,17 +9,12 @@ $(Flag)/dotmake-autocomplete: $(Finit) $(Flag)/makestuff
 		touch $@;
 		exit 0
 	}
-	echo 'complete -F _make $(HOME)/.dotmake # Added by inc/dotmake.mk' >> $(HOME)/.bashrc
+	echo 'complete -F _make $(VHOME)/.dotmake # Added by inc/dotmake.mk' >> $(HOME)/.bashrc
 	touch $@
 
-$(Flag)/dotmake-homelink:
+$(VHOME)/.dotfiles-spaces.d:
 	@# We want a symlink in VHOME which points to our dir for maintenance convenience.
-	# But only if that doesn't create conflicts...
-	cd $(absdir)
-	[[ -e $(VHOME)/dotfiles-spaces ]] || {
-		ln -sf $(abspath $(absdir)) $(VHOME)/dotfiles-spaces
-	}
-	touch $@
+	ln -sf $(abspath $(absdir))/.dotfiles-spaces.d $(VHOME)/
 
 $(HOME)/.dotmake:
 	@set -x
