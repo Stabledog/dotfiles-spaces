@@ -1,7 +1,7 @@
 inc/vscode-settings.mk: ;
 
 
-$(Flag)/vscode-settings-branchselect:
+$(Flag)/vscode-settings-branchselect: | $(VscodeUserDir)
 	@# Target $@
 	# Priority 1: if there's a branch that matches our machine name?
 	set -x
@@ -25,7 +25,7 @@ $(Flag)/vscode-settings-branchselect:
 	touch $@
 
 
-$(Flag)/vscode-repo:
+$(Flag)/vscode-repo: | $(VscodeUserDir)
 	@# Target $@
 	# clone or update the Roaming/Code/User dir from github
 	cd $(VscodeUserDir) || exit 21
@@ -49,7 +49,7 @@ $(Flag)/vscode-repo:
 		git remote add ghmine $(GhPubOrg)/vscode.snippets.git
 		git reset --hard HEAD
 	}
-	echo "$$PWD 1" >> $(HOME)/.tox-index
+	echo "$$PWD 1" >> $(VHOME)/.tox-index
 
 	touch $@
 

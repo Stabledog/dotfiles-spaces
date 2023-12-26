@@ -1,12 +1,15 @@
 inc/mega.mk: ;
 
-mega-devxspaces: \
-	bb-npmrc \
+XspacesCommonDeps = \
 	makestuff \
 	my-home \
 	bin-pub \
 	vbase \
-	spaceup \
+	spaceup 
+
+mega-devxspaces: \
+	bb-npmrc \
+	$(XspacesCommonDeps) \
 	vscodevim \
 	vsweb-settings \
 	vsweb-colorthemes \
@@ -14,8 +17,7 @@ mega-devxspaces: \
 	vimsane
 
 mega-codespaces: \
-	makestuff \
-	vbase
+	$(XspacesCommonDeps)
 	echo "Ok: $@"
 
 mega-wsl-bb: \
@@ -83,7 +85,7 @@ mega: $(Flag)/mega
 $(Flag)/mega: $(Finit)
 	@# Note: Git-bash chokes on something like "source <(output-of-command)", so we
 	# have this ugly hack instead:
-	tmpfile=$(HOME)/.tmp-mega-env
+	tmpfile=$(VHOME)/.tmp-mega-env
 	MAKEFLAGS= make -s -f $(Makefile) .mega-detect > $$tmpfile
 	echo "sourcing $$tmpfile:" >&2
 	source $$tmpfile

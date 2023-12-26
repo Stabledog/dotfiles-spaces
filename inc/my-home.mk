@@ -2,15 +2,15 @@ inc/my-home.mk: ;
 
 
 
-$(HOME)/my-home/.git/.init:
+$(VHOME)/my-home/.git:
+	cd $(VHOME)
 	@if $(ISBB); then
-		cd $(HOME)
 		git clone bbgithub:lmatheson4/my-home -o lm4
 		rm .taskrc || :
-		ln -sf $(HOME)/my-home/taskrc-spaces.d .taskrc
-		touch $@
+		ln -sf $(VHOME)/my-home/taskrc-spaces.d .taskrc
 	else
-		exit 29
+		git clone git@github.com:Stabledog/my-home
 	fi
+	touch $@
 
-my-home: $(HOME)/my-home/.git/.init
+my-home: | $(VHOME)/my-home/.git
