@@ -8,7 +8,7 @@ vscode.mk: ;
 
 #  The location of the VScode user settings dir is tricky: it's differerent between DevX Spaces, native WSL, and Github Codespaces.
 #  This logic is carefully tuned to yield a reasonable result.
-VscodeUserDir = $(shell command ls -d  $(VHOME)/.local/share/code-server/User  $(VHOME)/win-profile/AppData/Roaming/Code/User $(VHOME)/.vscode-remote/data/Machine 2>/dev/null | head -n 1 )
+VscodeUserDir = $(shell command ls -d  $(VHOME)/.local/share/code-server/User  $(VHOME)/win-profile/AppData/Roaming/Code/User 2>/dev/null | head -n 1 )
 
 ifeq ($(ISBB),true)
 VscodeSettingsOrg = bbgithub:$(User)
@@ -26,6 +26,3 @@ Config: .cfg-vscode
 	VscodeSettingsOrg="$(VscodeSettingsOrg)"
 	EOF
 
-$(VscodeUserDir):
-	@echo "vscode.mk: VscodeUserDir was missing so I added $(VscodeUserDir)" >&2
-	mkdir -p  $@
