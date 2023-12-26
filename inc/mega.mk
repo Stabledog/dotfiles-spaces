@@ -1,11 +1,11 @@
 inc/mega.mk: ;
 
-XspacesCommonDeps = \
-	makestuff \
-	my-home \
-	bin-pub \
-	vbase \
-	spaceup
+XspacesCommonDeps += makestuff
+XspacesCommonDeps += dotmake
+XspacesCommonDeps += my-home
+XspacesCommonDeps += bin-pub
+XspacesCommonDeps += vbase
+XspacesCommonDeps += spaceup
 
 mega-devxspaces: \
 	bb-npmrc \
