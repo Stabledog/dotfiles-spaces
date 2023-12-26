@@ -1,6 +1,6 @@
 inc/github.mk: ;
 
-github: $(Flag)/github-keys
+github: $(Flag)/github-keys $(absdir).git/.ssh-remote-flag
 
 SshDir=$(VHOME)/.ssh
 
@@ -26,5 +26,13 @@ $(SshDir)/config: | $(SshDir)
 
 $(SshDir):
 	@ # $@
-	mkdir -p $(VHOME)/.ssh
-	chmod 700 $(VHOME)/.ssh
+	mkdir -p $(HOME)/.ssh
+	chmod 700 $(HOME)/.ssh
+
+$(absdir).git/.ssh-remote-flag: | $(absdir).git
+	@# $@ We add a remote for ssh to aid maintenance on dotfiles itself
+	cd $(@D)
+	git remote -v | grep -E '^ghmine ' || {
+		git remote add ghmine  $(VscodeSettingsOrg)/dotfiles-spaces
+	}
+	touch $@

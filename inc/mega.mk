@@ -5,12 +5,12 @@ XspacesCommonDeps = \
 	my-home \
 	bin-pub \
 	vbase \
-	spaceup  \
-	vscodevim
+	spaceup 
 
 mega-devxspaces: \
 	bb-npmrc \
 	$(XspacesCommonDeps) \
+	vscodevim \
 	vsweb-settings \
 	vsweb-colorthemes \
 	app-setup \
