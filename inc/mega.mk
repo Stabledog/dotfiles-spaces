@@ -22,7 +22,8 @@ mega-codespaces: \
 	echo "Ok: $@"
 
 mega-wsl-bb: \
-	app-setup \
+	github \
+	vbase \
 	my-home \
 	bin-pub \
 	vimsane
@@ -90,6 +91,7 @@ $(Flag)/mega: $(Finit)
 	MAKEFLAGS= make -s -f $(Makefile) .mega-detect > $$tmpfile
 	echo "sourcing $$tmpfile:" >&2
 	source $$tmpfile
+	echo "mega_target=$$mega_target"
 	$(MAKE) -f $(Makefile) $$mega_target
 	rm $$tmpfile
 	touch $@
