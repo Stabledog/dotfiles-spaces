@@ -6,18 +6,18 @@ XspacesCommonDeps = \
 	bin-pub \
 	vbase \
 	spaceup  \
-	vscodevim 
-	
+
 mega-devxspaces: \
 	bb-npmrc \
 	$(XspacesCommonDeps) \
+	vscodevim \
 	vsweb-settings \
 	vsweb-colorthemes \
 	app-setup \
 	vimsane
 
 mega-codespaces: \
-	$(XspacesCommonDeps) 
+	$(XspacesCommonDeps)
 	echo "Ok: $@"
 
 mega-wsl-bb: \
