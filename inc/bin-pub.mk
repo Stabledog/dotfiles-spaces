@@ -1,8 +1,8 @@
 inc/bin-pub.mk: ;
 
-$(HOME)/bin/.git:
-	git clone https://github.com/Stabledog/bin-pub $(HOME)/bin -o ghmine
+$(VHOME)/bin/.git:
+	git clone https://github.com/Stabledog/bin-pub $(VHOME)/bin -o ghmine
 	touch $@
 
 
-bin-pub: | $(HOME)/bin/.git
+bin-pub: | $(VHOME)/bin/.git

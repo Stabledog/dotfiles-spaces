@@ -35,5 +35,5 @@ $(Flag)/vbase: $(Finit) $(Flag)/jumpstart
 	set -ue
 	$(VHOME)/.local/bin/vi-mode.sh on
 	echo "jumpstart vbase added OK"
-	echo 'alias d=dirs' >> $(HOME)/.cdpprc
+	echo 'alias d=dirs' >> $(VHOME)/.cdpprc
 	touch $@

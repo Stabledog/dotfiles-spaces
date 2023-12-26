@@ -6,7 +6,7 @@ $(Flag)/jumpstart: $(Finit)
 	$(ISBB) || {
 		set -x
 		bash -lic '[[ -n "$$JumpstartVersion" ]]' || {
-			command ln -sf $(absdir)jumpstart.bashrc $(HOME)
+			command ln -sf $(absdir)jumpstart.bashrc $(VHOME)
 			echo 'source ~/jumpstart.bashrc # Added by $(absdir)Makefile:$(@F)' >> ~/.bashrc
 		}
 		touch $@
