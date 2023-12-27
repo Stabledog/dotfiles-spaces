@@ -14,7 +14,7 @@ VscodeSettingsOrg = git@github.com:Stabledog
 Config: .cfg-vscode
 
 .cfg-vscode: | $(VscodeUserDir)
-	cat <<-"EOF"
+	@cat <<-"EOF"
 	#  vscode.mk:
 	VscodeUserDir="$(VscodeUserDir)"
 	VscodeSettingsOrg="$(VscodeSettingsOrg)"
