@@ -1,4 +1,3 @@
-vscode.mk: ;
 
 # Note the distinction between 'vscode' and 'vsweb' scripts:
 #  1.  'vscode.mk' -->  Common to all, loads first
@@ -22,3 +21,5 @@ Config: .cfg-vscode
 	echo '#  vscode.mk:'
 	echo 'VscodeUserDir=$(VscodeUserDir)'
 	echo 'VscodeSettingsOrg=$(VscodeSettingsOrg)'
+
+vscode.mk: ;
