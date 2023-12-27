@@ -5,7 +5,7 @@ $(Flag)/windows-env.sh:
 	# $(Flag)/windows-env.sh can be sourced to get linuxified paths for
 	# the main Windows environment variable
 	set -x
-	tmpfile=$(HOME)/.tmp-windows-env-$$$$
+	tmpfile=$(VHOME)/.tmp-windows-env-$$$$
 	which cmd.exe || exit 19
 	cmd="$$(which cmd.exe)"
 	cd /mnt/c

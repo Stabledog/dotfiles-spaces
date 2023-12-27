@@ -9,7 +9,7 @@ inc/nodestuff.mk: ;
 	EOF
 
 $(Flag)/bb-npmrc: $(Finit)
-	@MAKEFLAGS= make -s -f $(Makefile) .bb-npmrc > $(HOME)/.npmrc
+	@MAKEFLAGS= make -s -f $(Makefile) .bb-npmrc > $(VHOME)/.npmrc
 	touch $@
 
 bb-npmrc: $(Flag)/bb-npmrc
