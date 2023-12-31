@@ -55,7 +55,7 @@ $(Flag)/localhist-post: | $(HOME)/.localhistrc
 		devxspaces)
 			GH_URL=git@bbgithub.dev.bloomberg.com:lmatheson4/localhist-archive
 			;;
-		*)  break ;;
+		*)
 	esac
 	[[ -n $$GH_URL ]] && {
 		bash -x $(absdir)/bin/localhist-post.sh --infer-hostname --gh-url $$GH_URL
