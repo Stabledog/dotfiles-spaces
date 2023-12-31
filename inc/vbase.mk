@@ -1,7 +1,8 @@
 inc/vbase.mk: ;
 
-vbase: $(Flag)/vbase
-$(Flag)/vbase: $(Finit) $(Flag)/jumpstart
+vbase: $(Flag)/vbase-l1 $(Flag)/localhist-post
+
+$(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	@# Install shellkit vbase collection via jumpstart
 	mkdir -p ~/tmp
 	cd ~/tmp
@@ -37,3 +38,27 @@ $(Flag)/vbase: $(Finit) $(Flag)/jumpstart
 	echo "jumpstart vbase added OK"
 	echo 'alias d=dirs' >> $(VHOME)/.cdpprc
 	touch $@
+
+
+
+$(Flag)/localhist-post: | $(HOME)/.localhistrc
+	@# $@ localhist lets us munge the host name used for archival:
+	source $(HOME)/.localhistrc
+	GH_URL=
+	# If someone already setup .git, skip out early:
+	[[ -d $${LH_ARCHIVE}/.git ]] && {
+		touch $@;
+		exit 0
+	} || :
+
+	case $(DOTFILES_SYS) in
+		devxspaces)
+			GH_URL=git@bbgithub.dev.bloomberg.com:lmatheson4/localhist-archive
+			;;
+		*)  break ;;
+	esac
+	[[ -n $$GH_URL ]] && {
+		bash -x $(absdir)/bin/localhist-post.sh --infer-hostname --gh-url $$GH_URL
+	}
+	touch $@
+
