@@ -36,7 +36,7 @@ setup_gitsync() {
     [[ -d .git ]] && exit 29
     git clone "$gh_url" tmp-$$ || exit 31
     mv tmp-$$/.git ./ || exit 33
-    git checkout
+    git reset --hard HEAD
     rm -rf tmp-$$ || :
     git add . || :
     set +ue
