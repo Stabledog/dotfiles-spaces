@@ -7,6 +7,26 @@
 # offer this one exception:  ~/.dotmake -> [dotfiles-path]/.dotmake, which
 # can then be manually invoked from anywhere to zap the user settings.
 #
+#  About "App setup"
+#  -----------------
+#  Setup hook makefiles can be present in any top-level
+#  git WC if the following names exist (order matters):
+#
+#       /me/.dotfiles.mk
+#       /me/dotfiles.mk
+#       /me/spaces-dotfiles.mk
+#       /.dotfiles.mk
+#       /dotfiles.mk
+#       /spaces-dotfiles.mk
+#
+#    For all such files:
+#     - we 'cd' to the dir containing the makefile first
+#     - we invoke the default target
+#     - the ordering within a dir is always [.dotfiles.mk, dotfiles.mk,spaces-dotfiles.mk]
+#     - any error in any hook aborts the entire hook sequence remaining
+#
+#   (See inc/app-setup.mk for more)
+#
 set -ue
 #set -x
 export ORGDIR=$PWD
