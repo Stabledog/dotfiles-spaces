@@ -72,8 +72,8 @@ include $(shell ls inc/*.mk)
 	Flags="$(shell ls $(Flag))"
 	GhPubOrg=$(GhPubOrg)
 	ORGDIR="$(ORGDIR)"
-
 	EOF
+
 .cfg-export:
 	@# Add export decl to all config values:
 	$(MAKE) -f $(Makefile) Config | awk '/^[^#]+/ {print "export " $$0}'

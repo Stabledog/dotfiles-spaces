@@ -1,6 +1,6 @@
 inc/vbase.mk: ;
 
-vbase: $(Flag)/vbase-l1 $(Flag)/localhist-post
+vbase: $(Flag)/vbase-l1 $(Flag)/vbase-post
 
 $(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	@# Install shellkit vbase collection via jumpstart
@@ -39,7 +39,12 @@ $(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	echo 'alias d=dirs' >> $(VHOME)/.cdpprc
 	touch $@
 
+$(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name
+	@touch $@
 
+$(Flag)/git-fix-name:
+	@git config user.name "Les Matheson"
+	touch $@
 
 $(Flag)/localhist-post: | $(HOME)/.localhistrc
 	@# $@ localhist lets us munge the host name used for archival:
