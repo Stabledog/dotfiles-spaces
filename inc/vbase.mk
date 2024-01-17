@@ -39,8 +39,12 @@ $(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	echo 'alias d=dirs' >> $(VHOME)/.cdpprc
 	touch $@
 
-$(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name
+$(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name $(Flag)/shpm-makeup
 	@touch $@
+
+$(Flag)/shpm-makeup:
+	@$(HOME)/.local/bin/shpm install makeup
+	touch $@
 
 $(Flag)/git-fix-name:
 	@git config user.name "Les Matheson"
