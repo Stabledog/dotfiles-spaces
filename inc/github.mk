@@ -1,9 +1,23 @@
 inc/github.mk: ;
 
-github: $(Flag)/github-keys $(absdir).git/.ssh-remote-flag
+github: $(Flag)/git-username $(Flag)/github-keys $(absdir).git/.ssh-remote-flag
 
 SshDir=$(VHOME)/.ssh
 
+$(Flag)/git-username:
+	@
+	set -x
+	if git config --global user.email >/dev/null; then
+		:
+	else
+		if $(ISBB); then
+			git config --global user.email lmatheson4@bloomberg.net
+		else
+			git config --global user.email les.matheson@gmail.com
+		fi
+		git config --global user.name "Les Matheson"
+	fi
+	touch $@
 
 $(Flag)/github-keys: $(SshDir)/dotfile-setup | $(SshDir)/config
 	touch $@

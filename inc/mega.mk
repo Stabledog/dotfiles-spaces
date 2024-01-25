@@ -22,6 +22,7 @@ mega-codespaces: \
 	echo "Ok: $@"
 
 mega-wsl-bb: \
+	wsl-localefix \
 	github \
 	vbase \
 	my-home \
