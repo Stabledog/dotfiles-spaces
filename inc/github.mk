@@ -1,6 +1,6 @@
 inc/github.mk: ;
 
-github: $(Flag)/git-username $(Flag)/github-keys $(absdir).git/.ssh-remote-flag
+github: $(Flag)/git-username $(Flag)/github-keys $(absdir).git/.ssh-remote-flag git-config
 
 SshDir=$(VHOME)/.ssh
 

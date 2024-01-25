@@ -7,3 +7,12 @@ $(Flag)/wsl-localefix:
 		sudo locale-gen en_US.UTF-8
 	}
 	touch $@
+
+git-config: $(Flag)/wsl-gitconfig
+$(Flag)/wsl-gitconfig:
+	@if [[ $(DOTFILES_SYS) == wsl ]] && $(ISBB) ; then
+		cd
+		cp .gitconfig .gitconfig-BAK-$$$$
+		ln -sf my-home/gitconfig-bbvpn-wsl .gitconfig
+	fi
+	touch $@
