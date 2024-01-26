@@ -23,6 +23,12 @@ $(Flag)/windows-wsl-integration:
 		cd && ln -sf $${USERPROFILE} win-profile
 		cd && ln -sf $${USERPROFILE}/AppData appdata
 		cd && ln -sf $${USERPROFILE}/Downloads downloads
+
+		[[ -d /mnt/d ]] || {
+			echo "Provide sudo password to create /mnt/d mountpoint:"
+			sudo mkdir -p /mnt/d
+			echo "/mnt/d created: Ok"
+		}
 	}
 	touch $@
 
