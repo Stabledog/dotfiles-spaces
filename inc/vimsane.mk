@@ -15,3 +15,6 @@ $(Flag)/vimsane: $(Finit)
 	cd ..
 	rm -rf vimsane.tmp
 	touch $@
+
+clean-vimsane:
+	@rm -rf $(Flag)/vimsane $(HOME)/.flag-vimsane $(HOME)/.{vim,viminfo,vim_mru_files,vimtmp} || :
