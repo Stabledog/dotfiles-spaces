@@ -48,6 +48,14 @@ $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	@# $@ We add a remote for ssh to aid maintenance on dotfiles itself
 	cd $(@D)
 	git remote -v | grep -E '^ghmine ' || {
+		# Add a ghmine which uses the ssh mode.  This depends on ssh having
+		# the key and config that were setup in the $(SshDir)/config target
 		git remote add ghmine  $(VscodeSettingsOrg)/dotfiles-spaces
+		git fetch ghmine
+
+		# Reset the remote binding to use ssh instead of the https that codespaces
+		# created:
+		current_branch_name=$$( git branch | awk '/^\* / {print $$2}' )
+		git branch -u ghmine/$$current_branch_name
 	}
 	touch $@
