@@ -22,7 +22,7 @@ $(Flag)/git-username:
 $(Flag)/github-keys: $(SshDir)/dotfile-setup | $(SshDir)/config
 	touch $@
 
-$(SshDir)/dotfile-setup $(sshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $(absdir)dot/dotfile-setup.tgz.gpg | $(SshDir)/config
+$(SshDir)/dotfile-setup $(SshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $(absdir)dot/dotfile-setup.tgz.gpg | $(SshDir)/config
 	@# $@
 	cd $(@D)
 	gpg --ignore-mdc-error -d $< | tar xv

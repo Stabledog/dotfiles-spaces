@@ -1,8 +1,8 @@
 inc/my-home.mk: ;
 
 
-include $(VHOME)/my-home/dotfiles-spaces.mk
-$(VHOME)/my-home/dotfiles-spaces.mk:
+-include $(VHOME)/my-home/dotfiles-spaces.mk
+$(VHOME)/my-home/dotfiles-spaces.mk: | $(SshDir)/dotfile-setup .env.mk
 	pushd $(VHOME)
 	@if $(ISBB); then
 		git clone bbgithub:lmatheson4/my-home -o lm4
