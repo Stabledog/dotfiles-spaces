@@ -3,9 +3,9 @@
 code() {
     which code &>/dev/null && {
         command code "$@"
-        exit
+    } || {
+        command code-server "$@"
     }
-    command code-server "$@"
 }
 
 which vim &>/dev/null || alias vim=vi
