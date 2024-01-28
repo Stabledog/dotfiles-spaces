@@ -64,6 +64,9 @@ $(Flag)/localhist-post: | $(HOME)/.localhistrc
 		devxspaces)
 			GH_URL=git@bbgithub.dev.bloomberg.com:lmatheson4/localhist-archive
 			;;
+		codespaces)
+			GH_URL=git@github.com:Stabledog/localhist-archive
+			;;
 		*)
 	esac
 	[[ -n $$GH_URL ]] && {
