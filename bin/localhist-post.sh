@@ -21,8 +21,13 @@ die() {
 
 infer_hostname() {
     xname=$(ls -d /*/.git 2>/dev/null | head -n 1)
-    [[ -n $xname ]] || return
-    ( IFS='/'; echo ${xname} | awk '{print $1}' )
+    [[ -n $xname ]] || {
+        xname=$(ls -d /workspaces/*/.git 2>/dev/null | head -n 1)
+        [[ -n $xname ]] || {
+            return
+        }
+    }
+    ( IFS='/'; echo ${xname} | awk '{print $(NF-1)}' )
 }
 
 setup_gitsync() {
