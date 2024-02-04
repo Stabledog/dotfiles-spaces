@@ -2,8 +2,9 @@
 
 code() {
     [[ -e $VSCODE_IPC_HOOK_CLI ]] && {
-        [[ -x ${HOME}/.vscode-remote/bin/*/remote-cli/code ]] && {
-            ${HOME}/.vscode-remote/bin/*/remote-cli/code "$@"
+        remoteCli=$(ls ${HOME}/.vscode-remote/bin/*/bin/remote-cli/code 2>/dev/null | head -n 1 )
+        [[ -x "${remoteCli}" ]] && {
+            "${remoteCli}" "$@"
             return
         }
         which code-server &>/dev/null && {
