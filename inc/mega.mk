@@ -18,6 +18,7 @@ mega-devxspaces: \
 
 mega-codespaces: \
 	$(Flag)/localefix \
+	$(Flag)/gpg-nosign \
 	github \
 	$(XspacesCommonDeps)
 	echo "Ok: $@"

@@ -19,6 +19,13 @@ $(Flag)/git-username:
 	fi
 	touch $@
 
+$(Flag)/gpg-nosign: $(Flag)/git-username
+	@# $@
+	@# Turn off commit signing default
+	git config --global commit.gpgsign false
+	git config --local commit.gpgsign false
+	touch $@
+
 $(Flag)/github-keys: $(SshDir)/dotfile-setup | $(SshDir)/config
 	touch $@
 
