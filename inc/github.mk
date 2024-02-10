@@ -39,6 +39,11 @@ $(SshDir)/dotfile-setup $(SshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $
 
 $(SshDir)/config: | $(SshDir)
 	@# $@
+	if grep -q dotfile-setup $@ ; then
+		exit 0
+	else
+		:
+	fi
 	cat <<-EOF > $@
 	# Added by $(absdir)inc/github.mk
 	Host github.com
@@ -49,8 +54,9 @@ $(SshDir)/config: | $(SshDir)
 
 $(SshDir):
 	@ # $@
-	mkdir -p $(HOME)/.ssh
-	chmod 700 $(HOME)/.ssh
+	[[ -d $(VHOME)/.ssh ]] && exit 0
+	mkdir -p $(VHOME)/.ssh
+	chmod 700 $(VHOME)/.ssh
 
 $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	@# $@ We add a remote for ssh to aid maintenance on dotfiles itself
@@ -67,3 +73,4 @@ $(absdir).git/.ssh-remote-flag: | $(absdir).git
 		git branch -u ghmine/$$current_branch_name
 	}
 	echo > $@
+
