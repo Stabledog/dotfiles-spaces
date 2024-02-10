@@ -17,11 +17,14 @@ mega-devxspaces: \
 	vimsane
 
 mega-codespaces: \
+	$(Flag)/localefix \
+	$(Flag)/gpg-nosign \
 	github \
 	$(XspacesCommonDeps)
 	echo "Ok: $@"
 
 mega-wsl-bb: \
+	wsl-localefix \
 	github \
 	vbase \
 	my-home \
