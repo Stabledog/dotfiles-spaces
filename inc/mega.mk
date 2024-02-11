@@ -41,7 +41,7 @@ mega-wsl-bb-docker:  \
 mega-wsl: \
 	windows-wsl-integration \
 	vimsane \
-	vscode-sttings
+	vscode-settings
 	echo "Ok: $@"
 
 
