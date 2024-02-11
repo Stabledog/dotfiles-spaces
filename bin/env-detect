@@ -52,7 +52,7 @@ do_detect() {
     fi
 
     ISBB=false
-    bbresponse=$( curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
+    bbresponse=$( curl --connect-timeout 3 -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
     case $bbresponse in
         301*)
             ISBB=true ;;
