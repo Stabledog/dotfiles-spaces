@@ -39,17 +39,17 @@ $(SshDir)/dotfile-setup $(SshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $
 
 $(SshDir)/config: | $(SshDir)
 	@# $@
-	if grep -q dotfile-setup $@ ; then
+	if grep -q dotfile-setup $@ &>/dev/null; then
 		exit 0
 	else
 		:
 	fi
-	cat <<-EOF > $@
-	# Added by $(absdir)inc/github.mk
-	Host github.com
-		User git
-		IdentityFile $(SshDir)/dotfile-setup
-		IdentitiesOnly True
+	cat <<-EOF | cut -c 2- > $@
+	|# Added by $(absdir)inc/github.mk
+	|Host github.com
+	|	User git
+	|	IdentityFile $(SshDir)/dotfile-setup
+	|	IdentitiesOnly True
 	EOF
 
 $(SshDir):
