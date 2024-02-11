@@ -14,7 +14,8 @@ $(Flag)/windows-env.sh:
 
 	rm $$tmpfile
 
-$(Flag)/windows-wsl-integration:
+windows-wsl-integration: $(Flag)/windows-wsl-integration
+$(Flag)/windows-wsl-integration $(VHOME)/win-profile:
 	@# Stuff to help with hooking up shell to Windows
 	[[ $(DOTFILES_SYS) == wsl ]] && {
 		$(MAKE) -s $(Flag)/windows-env.sh

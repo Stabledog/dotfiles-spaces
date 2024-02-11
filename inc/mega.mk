@@ -24,6 +24,7 @@ mega-codespaces: \
 mega-wsl-bb: \
 	wsl-localefix \
 	github \
+	windows-wsl-integration \
 	vbase \
 	my-home \
 	bin-pub \
@@ -36,6 +37,7 @@ mega-wsl-bb-docker:  \
 	echo "Ok: $@"
 
 mega-wsl: \
+	windows-wsl-integration \
 	vimsane \
 	vscode-sttings
 	echo "Ok: $@"
