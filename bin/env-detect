@@ -19,6 +19,7 @@ do_detect() {
     DOTFILES_SYS=
     PKGMGRS=()
     local  user_detected=$(whoami)
+    local Sudo=
     case $uname_x in
         *WSL2*)
             DOTFILES_SYS=wsl;;
@@ -35,6 +36,11 @@ do_detect() {
             }
             ;;
     esac
+    if ! touch /bin/root-write-test 2>/dev/null; then
+        which sudo &>/dev/null && {
+            Sudo=sudo
+        } || :
+    fi
 
     ISDOCKER=false
     if [[ -f /.dockerenv ]]; then
@@ -46,7 +52,7 @@ do_detect() {
     fi
 
     ISBB=false
-    bbresponse=$( curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
+    bbresponse=$( curl --connect-timeout 3 -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
     case $bbresponse in
         301*)
             ISBB=true ;;
@@ -97,6 +103,7 @@ do_detect() {
     User=${user_detected}
     ISBB=${ISBB}
     ISDOCKER=${ISDOCKER}
+    Sudo=${Sudo}
 EOF
 
     printf "    PKG_MANAGERS='";

@@ -17,6 +17,8 @@ mega-devxspaces: \
 	vimsane
 
 mega-codespaces: \
+	$(Flag)/localefix \
+	$(Flag)/gpg-nosign \
 	github \
 	$(XspacesCommonDeps)
 	echo "Ok: $@"
