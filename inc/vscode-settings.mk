@@ -1,28 +1,6 @@
 inc/vscode-settings.mk: ;
 
 
-$(Flag)/vscode-settings-branchselect: | $(VscodeUserDir)
-	@# Target $@
-	# Priority 1: if there's a branch that matches our machine name?
-	set -x
-	cd $(VscodeUserDir)
-	host=$$(hostname 2>/dev/null | tr 'A-Z' 'a-z')
-	[[ -n "$$host" ]] && {
-		git checkout "$$host" && {
-			touch $@
-			exit 0
-		} || :
-	} || {
-		case "$(DOTFILES_SYS)" in
-			devxspaces) targetbranch=devxspaces ;;
-			*) targetbranch=_reference_ ;;
-		esac
-		[[ -n "$$targetbranch" ]] && {
-			git stash || :
-			git checkout "origin/$$targetbranch"
-		}
-	}
-	touch $@
 
 
 $(Flag)/vscode-repo: | $(VscodeUserDir)
@@ -55,8 +33,7 @@ $(Flag)/vscode-repo: | $(VscodeUserDir)
 
 $(Flag)/vscode-settings:  \
 	$(Finit) \
-	$(Flag)/vscode-repo \
-	$(Flag)/vscode-settings-branchselect
+	$(Flag)/vscode-repo 
 
 	touch $@
 
@@ -66,8 +43,3 @@ vscode-settings: $(Flag)/vscode-settings
 	# Setup vscode settings in local-mode (e.g. git bash, wsl, native linux, etc)
 	echo Ok: $@
 
-x:
-	@set -x
-	rm $(Flag)/vscode-{settings,basic} || :
-	rm $(Flag)/windows-env.sh || :
-	$(MAKE) -sf Makefile vscode-settings
