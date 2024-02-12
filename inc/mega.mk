@@ -11,6 +11,7 @@ mega-devxspaces: \
 	bb-npmrc \
 	$(XspacesCommonDeps) \
 	vscodevim \
+	vscode-devx-spaces \
 	vsweb-settings \
 	vsweb-colorthemes \
 	app-setup \
