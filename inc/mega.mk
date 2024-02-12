@@ -39,8 +39,12 @@ mega-wsl-bb-docker:  \
 	echo "Ok: $@"
 
 mega-wsl: \
-	windows-wsl-integration \
-	vimsane
+	vimsane \
+	$(Flag)/localefix \
+	vbase \
+	my-home \
+	vimsane \
+	windows-wsl-integration
 	echo "Ok: $@"
 
 
