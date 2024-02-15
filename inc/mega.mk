@@ -45,7 +45,8 @@ mega-wsl: \
 	vbase \
 	my-home \
 	vimsane \
-	windows-wsl-integration
+	windows-wsl-integration \
+	vscode-settings
 	echo "Ok: $@"
 
 
