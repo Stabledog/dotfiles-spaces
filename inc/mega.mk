@@ -41,7 +41,7 @@ mega-wsl-bb-docker:  \
 
 mega-wsl: \
 	vimsane \
-	$(Flag)/localefix \
+	wsl-localefix \
 	vbase \
 	my-home \
 	vimsane \
