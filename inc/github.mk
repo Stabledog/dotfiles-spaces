@@ -74,3 +74,26 @@ $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	}
 	echo > $@
 
+$(Flag)/gh-cli:
+	@case "$(PKG_MANAGERS)" in
+		*apt-get*)
+			$(Sudo) apt-get install -y gh-cli
+			touch $@
+			;;
+		*)
+			exit 21  # No suitable package manager
+			;;
+	esac
+
+
+$(Flag)/gh-help: $(Flag)/gh-cli
+	@# Install gh cli
+	case "$(PKG_MANAGERS)" in
+		*shpm*)
+			shpm install gh-help
+			touch $@
+			;;
+		*)
+			exit 21  # No suitable package manager
+			;;
+	esac

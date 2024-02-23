@@ -15,7 +15,8 @@ mega-devxspaces: \
 	vsweb-settings \
 	vsweb-colorthemes \
 	app-setup \
-	vimsane
+	vimsane \
+	$(Flag)/gh-help
 
 mega-codespaces: \
 	$(Flag)/localefix \

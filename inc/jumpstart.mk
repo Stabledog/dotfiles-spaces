@@ -16,6 +16,7 @@ $(Flag)/jumpstart: $(Finit)
 		-o ~/jumpstart-$$UID-$$$$ || exit 19
 	bash ~/jumpstart-$$UID-$$$$ && rm -f ~/jumpstart-$$UID-$$$$
 	touch $@
+	touch $(Flag)/env-dirty
 
 Config: .cfg.jumpstart
 .cfg.jumpstart: .cfg.top

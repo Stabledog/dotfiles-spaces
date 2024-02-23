@@ -37,6 +37,7 @@ $(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	$(VHOME)/.local/bin/vi-mode.sh on
 	echo "jumpstart vbase added OK"
 	echo 'alias d=dirs' >> $(VHOME)/.cdpprc
+	touch $(Flag)/env-setup
 	touch $@
 
 $(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name $(Flag)/shpm-makeup
