@@ -75,6 +75,7 @@ $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	echo > $@
 
 $(Flag)/gh-cli:
+	source <( $(absdir)bin/env-detect )
 	@case "$(PKG_MANAGERS)" in
 		*apt-get*)
 			$(Sudo) apt-get install -y gh-cli
@@ -88,6 +89,7 @@ $(Flag)/gh-cli:
 
 $(Flag)/gh-help: $(Flag)/gh-cli
 	@# Install gh cli
+	source <( $(absdir)bin/env-detect )
 	case "$(PKG_MANAGERS)" in
 		*shpm*)
 			bash -lic 'shpm install gh-help'
