@@ -22,9 +22,11 @@ Makefile: ;
 VHOME := $(shell $(absdir)bin/get-vhome)
 # ^^ Warning: don't use HOME in makefiles, as it expands badly on Windows/git-bash
 
+Flag := $(VHOME)/.flag-dotfiles
 
-$(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile
+$(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile $(Flag)/env-dirty
 	@set -ue # Environment detection comes before any conditional stuff
+	touch $(Flag)/env-dirty  # Any recipe can touch env-dirty to force rebuild of .env.mk
 	$< > $@
 
 # Create+include .env.mk and .metatargets.mk:
@@ -35,14 +37,14 @@ include $(shell ls pre-hook/*.mk)
 
 GhPubOrg = https://github.com/Stabledog
 
-Flag := $(VHOME)/.flag-dotfiles
 
 # Targets which touch a flag in $(Flag) should depend on $(Finit)
 Finit=$(Flag)/.init
-$(Flag)/.init:
+$(Flag)/.init $(Flag)/env-dirty:
 	@mkdir -p $(Flag)
 	echo "$(Flag) 1" >> $(VHOME)/.tox-index
 	echo "$(VHOME)/dotfiles" >> $(VHOME)/.tox-index
+	touch $(@D)/env-dirty
 	touch $@
 
 Config: .cfg.top
