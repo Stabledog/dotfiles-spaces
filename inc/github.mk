@@ -78,7 +78,18 @@ $(Flag)/gh-cli:
 	@source <( $(absdir)bin/env-detect )
 	case "$(PKG_MANAGERS)" in
 		*apt-get*)
-			$(Sudo) apt-get install -y gh-cli
+			apt-get install -s gh-cli &>/dev/null &&  {
+				$(Sudo) apt-get install -y gh-cli
+			} || {
+				# If we can't apt-get it, let's try Github's magic repo
+				set -x
+				curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | $(Sudo) dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+				$(Sudo) chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+				echo "deb [arch=$$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+					| $(Sudo) tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+				$(Sudo) apt update
+				$(Sudo) sudo apt install gh -y
+			}
 			touch $@
 			;;
 		*)
