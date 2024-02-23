@@ -90,7 +90,7 @@ $(Flag)/gh-help: $(Flag)/gh-cli
 	@# Install gh cli
 	case "$(PKG_MANAGERS)" in
 		*shpm*)
-			shpm install gh-help
+			bash -lic 'shpm install gh-help'
 			touch $@
 			;;
 		*)
