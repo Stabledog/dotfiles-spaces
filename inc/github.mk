@@ -75,19 +75,19 @@ $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	echo > $@
 
 $(Flag)/gh-cli:
-	source <( $(absdir)bin/env-detect )
-	@case "$(PKG_MANAGERS)" in
+	@source <( $(absdir)bin/env-detect )
+	case "$(PKG_MANAGERS)" in
 		*apt-get*)
 			$(Sudo) apt-get install -y gh-cli
 			touch $@
 			;;
 		*)
-			exit 21  # No suitable package manager
+			exit 19  # No suitable package manager
 			;;
 	esac
 
 
-$(Flag)/gh-help: $(Flag)/gh-cli
+$(Flag)/gh-help: $(Flag)/gh-cli | vbase
 	@# Install gh cli
 	source <( $(absdir)bin/env-detect )
 	case "$(PKG_MANAGERS)" in
