@@ -99,3 +99,5 @@ $(Flag)/gh-help: $(Flag)/gh-cli
 			exit 21  # No suitable package manager
 			;;
 	esac
+
+gh-help: $(Flag)/gh-help
