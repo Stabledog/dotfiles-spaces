@@ -53,7 +53,7 @@ $(SshDir)/config: | $(SshDir)/.init
 	|	IdentitiesOnly True
 	EOF
 
-$(SshDir) $(SshDir)/.init:
+$(SshDir)/.init:
 	@ # $@
 	[[ -d $(VHOME)/.ssh ]] || {
 		mkdir -p $(VHOME)/.ssh

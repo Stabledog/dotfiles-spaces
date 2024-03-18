@@ -26,7 +26,7 @@ Flag := $(VHOME)/.flag-dotfiles
 
 $(absdir).env.mk: $(absdir)bin/env-detect $(absdir)Makefile $(Flag)/env-dirty
 	@set -ue # Environment detection comes before any conditional stuff
-	touch $(Flag)/env-dirty  # Any recipe can touch env-dirty to force rebuild of .env.mk
+	#touch $(Flag)/env-dirty  # Any recipe can touch env-dirty to force rebuild of .env.mk
 	$< > $@
 
 # Create+include .env.mk and .metatargets.mk:

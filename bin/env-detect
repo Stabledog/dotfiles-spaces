@@ -107,9 +107,14 @@ do_detect() {
 EOF
 
     printf "    PKG_MANAGERS='";
-    [[ ${#PKGMGRS[@]} -gt 0 ]] && {
-        printf '%s ' "${PKGMGRS[@]}"
-    } || :
+    declare -i ixp; ixp=0
+    while [[ $ixp < ${#PKGMGRS[@]} ]]; do
+        case $ixp in
+            0) printf ${PKGMGRS[$ixp]} ;;
+            *) printf " ${PKGMGRS[$ixp]}" ;;
+        esac
+        ixp=${ixp}+1
+    done
     printf "'\n"
 }
 
