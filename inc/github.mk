@@ -37,9 +37,10 @@ $(SshDir)/dotfile-setup $(SshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $
 	touch $(SshDir)/dotfile-setup* $(SshDir)/git-credentials
 	cd && ln -sf $(SshDir)/git-credentials .git-credentials
 
-$(SshDir)/config: | $(SshDir)
+$(SshDir)/config: | $(SshDir)/.init
 	@# $@
 	if grep -q dotfile-setup $@ &>/dev/null; then
+		touch $@
 		exit 0
 	else
 		:
@@ -52,11 +53,13 @@ $(SshDir)/config: | $(SshDir)
 	|	IdentitiesOnly True
 	EOF
 
-$(SshDir):
+$(SshDir) $(SshDir)/.init:
 	@ # $@
-	[[ -d $(VHOME)/.ssh ]] && exit 0
-	mkdir -p $(VHOME)/.ssh
+	[[ -d $(VHOME)/.ssh ]] || {
+		mkdir -p $(VHOME)/.ssh
+	}
 	chmod 700 $(VHOME)/.ssh
+	touch $(SshDir)/.init
 
 $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	@# $@ We add a remote for ssh to aid maintenance on dotfiles itself
