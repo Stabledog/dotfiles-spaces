@@ -101,7 +101,7 @@ $(Flag)/gh-cli:
 $(Flag)/gh-help: $(Flag)/gh-cli | vbase
 	@# Install gh cli
 	source <( $(absdir)bin/env-detect )
-	case "$(PKG_MANAGERS)" in
+	case "${PKG_MANAGERS}" in
 		*shpm*)
 			bash -lic 'shpm install gh-help'
 			touch $@
