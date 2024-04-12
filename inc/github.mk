@@ -33,7 +33,11 @@ $(Flag)/github-keys: $(SshDir)/dotfile-setup | $(SshDir)/config
 $(SshDir)/dotfile-setup $(SshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $(absdir)dot/dotfile-setup.tgz.gpg | $(SshDir)/config
 	@# $@
 	cd $(@D)
-	gpg --ignore-mdc-error -d $< | tar xv
+	{
+		[[ -n $DOTFILE_SETUP_PASS ]] && \
+			gpg --ignore-mdc-error --batch --passphrase "${DOTFILE_SETUP_PASS}" --decrypt $< \
+		||  gpg --ignore-mdc-error --decrypt $<
+	} | tar xv
 	touch $(SshDir)/dotfile-setup* $(SshDir)/git-credentials
 	cd && ln -sf $(SshDir)/git-credentials .git-credentials
 
