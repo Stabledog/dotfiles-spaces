@@ -93,6 +93,13 @@ $(Flag)/gh-cli:
 					| $(Sudo) tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 				$(Sudo) apt update
 				$(Sudo) sudo apt install gh -y
+			} || {
+				# Next guess: maybe dnf can get it?
+				# See also https://github.com/cli/cli/blob/trunk/docs/install_linux.md#fedora-centos-red-hat-enterprise-linux-dnf
+				$(Sudo) mkdir -p /usr/share/keyrings
+				$(Sudo) dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+				$(Sudo) dnf install --skip-broken gh --repo gh-cli
+				$(Sudo) dnf install -y gh
 			}
 			touch $@
 			;;
@@ -101,6 +108,7 @@ $(Flag)/gh-cli:
 			;;
 	esac
 
+gh-cli: $(Flag)/gh-cli
 
 $(Flag)/gh-help: $(Flag)/gh-cli | vbase
 	@# Install gh cli
