@@ -7,6 +7,7 @@
 scriptName="$(readlink -f "$0")"
 scriptDir=$(command dirname -- "${scriptName}")
 set -ue
+CodeOpts=
 
 die() {
     builtin echo "ERROR($(basename ${scriptName})): $*" >&2
@@ -31,6 +32,9 @@ do_detect() {
         *)
             grep -q code-server-init /proc/1/cmdline &>/dev/null && {
                 DOTFILES_SYS=devxspaces
+                [[ "${HOME}" == /root ]] && {
+                    CodeOpts="--user-data-dir=/root/.config/code-server --no-sandbox"
+                }
             } || {
                 DOTFILES_SYS=unknown
             }
@@ -99,7 +103,8 @@ do_detect() {
 
     cat <<-EOF
     DOTFILES_SYS=$DOTFILES_SYS
-    Code="$(which code code-server 2>/dev/null | head -n 1)"
+    Code=$(which code code-server 2>/dev/null | head -n 1)
+    CodeOpts="${CodeOpts}"
     User=${user_detected}
     ISBB=${ISBB}
     ISDOCKER=${ISDOCKER}
