@@ -67,6 +67,7 @@ include $(shell ls inc/*.mk)
 	#  $(absdir)Makefile:
 	Makefile=$(Makefile)
 	Code=$(Code)
+	CodeOpts=$(CodeOpts)
 	absdir=$(absdir)
 	User=$(User)
 	VHOME=$(VHOME)
