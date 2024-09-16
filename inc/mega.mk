@@ -61,7 +61,7 @@ mega-gitbash-bb:
 .mega-detect:
 	@# Add our stuff to the metatargets.mk stuff:
 
-	source $(absdir).env.mk
+	source $(absdir).env.sh
 	inner_target=null
 	case "$(DOTFILES_SYS)" in
 		codespaces)
