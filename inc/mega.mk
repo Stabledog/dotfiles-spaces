@@ -5,11 +5,12 @@ XspacesCommonDeps += dotmake
 XspacesCommonDeps += my-home
 XspacesCommonDeps += bin-pub
 XspacesCommonDeps += vbase
-XspacesCommonDeps += spaceup
 
 mega-devxspaces: \
 	bb-npmrc \
+	docktools \
 	$(XspacesCommonDeps) \
+	spaceup \
 	vscodevim \
 	vscode-devx-spaces \
 	vsweb-settings \
