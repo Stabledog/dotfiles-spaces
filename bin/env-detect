@@ -7,6 +7,7 @@
 scriptName="$(readlink -f "$0")"
 scriptDir=$(command dirname -- "${scriptName}")
 set -ue
+CodeOpts=
 
 die() {
     builtin echo "ERROR($(basename ${scriptName})): $*" >&2
@@ -19,6 +20,7 @@ do_detect() {
     DOTFILES_SYS=
     PKGMGRS=()
     local  user_detected=$(whoami)
+    local Sudo=
     case $uname_x in
         *WSL2*)
             DOTFILES_SYS=wsl;;
@@ -30,11 +32,19 @@ do_detect() {
         *)
             grep -q code-server-init /proc/1/cmdline &>/dev/null && {
                 DOTFILES_SYS=devxspaces
+                # [[ "${HOME}" != /root ]] && {
+                #     CodeOpts="--user-data-dir=/root/.config/code-server --no-sandbox"
+                # }
             } || {
                 DOTFILES_SYS=unknown
             }
             ;;
     esac
+    if ! touch /bin/root-write-test 2>/dev/null; then
+        which sudo &>/dev/null && {
+            Sudo=sudo
+        } || :
+    fi
 
     ISDOCKER=false
     if [[ -f /.dockerenv ]]; then
@@ -46,7 +56,7 @@ do_detect() {
     fi
 
     ISBB=false
-    bbresponse=$( curl -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
+    bbresponse=$( curl --connect-timeout 3 -IL bbgithub.dev.bloomberg.com 2>/dev/null | awk '/^HTTP/ {print $2 "\t" $0}' )
     case $bbresponse in
         301*)
             ISBB=true ;;
@@ -89,14 +99,20 @@ do_detect() {
 
 
     ##  Write output
+    #  Note: the output is written to .env.mk and .env.sh, and is nearly identical in both.
+    #  But... double-quotes are stripped when creating .env.mk.  So the choice to use
+    #  double or single quotes below is important:  do you want them preserved in both
+    #  env.* files?
     ################
 
     cat <<-EOF
     DOTFILES_SYS=$DOTFILES_SYS
-    Code="$(which code code-server 2>/dev/null | head -n 1)"
+    Code=$(which code-server code false 2>/dev/null | head -n 1)
+    CodeOpts="${CodeOpts}"
     User=${user_detected}
     ISBB=${ISBB}
     ISDOCKER=${ISDOCKER}
+    Sudo=${Sudo}
 EOF
 
     printf "    PKG_MANAGERS='";

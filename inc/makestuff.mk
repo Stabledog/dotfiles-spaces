@@ -18,6 +18,6 @@ $(Flag)/makestuff: $(Finit)
 		apt-get install -y bash-completion
 	}
 	bash -lic '[[ -n "$$BASH_COMPLETION_VERSINFO" ]]' || {
-		echo 'source /opt/bb/share/bash-completion/bash_completion # Added by dotfiles/Makefile:makestuff' >> $(HOME)/.bashrc
+		echo 'source /opt/bb/share/bash-completion/bash_completion # Added by dotfiles/Makefile:makestuff' >> $(VHOME)/.bashrc
 	}
 	touch $@

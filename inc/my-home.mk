@@ -1,16 +1,18 @@
 inc/my-home.mk: ;
 
 
-
-$(HOME)/my-home/.git/.init:
+-include $(VHOME)/my-home/dotfiles-spaces.mk
+$(VHOME)/my-home/dotfiles-spaces.mk: | $(SshDir)/dotfile-setup .env.mk
+	pushd $(VHOME)
 	@if $(ISBB); then
-		cd $(HOME)
 		git clone bbgithub:lmatheson4/my-home -o lm4
-		rm .taskrc || :
-		ln -sf $(HOME)/my-home/taskrc-spaces.d .taskrc
-		touch $@
 	else
-		exit 29
+		git clone git@github.com:Stabledog/my-home
 	fi
+	popd
+	# my-home/dotfiles-spaces.mk takes it further:
+	[[ -f $@ ]] || exit 29
+	$(MAKE)  -s my-home-setup
+	touch $@
 
-my-home: $(HOME)/my-home/.git/.init
+my-home: | $(VHOME)/my-home/.git

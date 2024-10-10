@@ -1,7 +1,8 @@
 inc/vbase.mk: ;
 
-vbase: $(Flag)/vbase
-$(Flag)/vbase: $(Finit) $(Flag)/jumpstart
+vbase: $(Flag)/vbase-l1 $(Flag)/vbase-post
+
+$(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	@# Install shellkit vbase collection via jumpstart
 	mkdir -p ~/tmp
 	cd ~/tmp
@@ -35,5 +36,42 @@ $(Flag)/vbase: $(Finit) $(Flag)/jumpstart
 	set -ue
 	$(VHOME)/.local/bin/vi-mode.sh on
 	echo "jumpstart vbase added OK"
-	echo 'alias d=dirs' >> $(HOME)/.cdpprc
+	echo 'alias d=dirs' >> $(VHOME)/.cdpprc
+	touch $(Flag)/env-setup
 	touch $@
+
+$(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name $(Flag)/shpm-makeup
+	@touch $@
+
+$(Flag)/shpm-makeup:
+	@$(HOME)/.local/bin/shpm install makeup
+	touch $@
+
+$(Flag)/git-fix-name:
+	@git config user.name "Les Matheson"
+	touch $@
+
+$(Flag)/localhist-post: | $(HOME)/.localhistrc
+	@# $@ localhist lets us munge the host name used for archival:
+	source $(HOME)/.localhistrc
+	GH_URL=
+	# If someone already setup .git, skip out early:
+	[[ -d $${LH_ARCHIVE}/.git ]] && {
+		touch $@;
+		exit 0
+	} || :
+
+	case $(DOTFILES_SYS) in
+		devxspaces)
+			GH_URL=git@bbgithub.dev.bloomberg.com:lmatheson4/localhist-archive
+			;;
+		codespaces)
+			GH_URL=git@github.com:Stabledog/localhist-archive
+			;;
+		*)
+	esac
+	[[ -n $$GH_URL ]] && {
+		bash -x $(absdir)/bin/localhist-post.sh --infer-hostname --gh-url $$GH_URL
+	}
+	touch $@
+
