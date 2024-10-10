@@ -22,5 +22,5 @@ Set-PSReadLineKeyHandler -Key k -ViMode Insert -ScriptBlock {
     }
 }
 # Add this line to enable tab completion from history
-Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadLineKeyHandler -Key Tab -Function Complete
 
