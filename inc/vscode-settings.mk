@@ -6,23 +6,28 @@ inc/vscode-settings.mk: ;
 $(Flag)/vscode-repo: | $(VscodeUserDir)
 	@# Target $@
 	# clone or update the Roaming/Code/User dir from github
+	PS4=$(PS4)
 	cd $(VscodeUserDir) || exit 21
-	[[ -d ./.git ]] && {
+	if [[ -d ./.git ]]; then
+		git config core.fileMode false
 		git pull
-	} || {
+	else
 		git clone $(VscodeSettingsOrg)/vscode.settings ~/tmp$$$$
+		git config core.fileMode false
 		mv ~/tmp$$$$/.git ./
 		git remote add ghmine $(GhPubOrg)/vscode.settings.git
 		git checkout .
 		rm -rf ~/tmp$$$$
-	}
+	fi
 	# Let's do ./snippets also:
 	mkdir -p ./snippets
 	cd ./snippets
 	[[ -d ./.git ]] && {
+		git config core.fileMode false
 		git pull
 	} || {
 		git clone $(VscodeSettingsOrg)/vscode.snippets tmp$$$$
+		git config core.fileMode false
 		mv tmp$$$$/.git ./
 		git remote add ghmine $(GhPubOrg)/vscode.snippets.git
 		git checkout .

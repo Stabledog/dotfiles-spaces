@@ -5,7 +5,7 @@
 #  syntax or "source [filename]" in shell syntax, being just assignment statements.
 
 scriptName="$(readlink -f "$0")"
-scriptDir=$(command dirname -- "${scriptName}")
+
 set -ue
 CodeOpts=
 
@@ -16,10 +16,12 @@ die() {
 
 do_detect() {
 
-    local uname_x=$(uname -a)
+    local uname_x
+    uname_x=$(uname -a)
     DOTFILES_SYS=
     PKGMGRS=()
-    local  user_detected=$(whoami)
+    local  user_detected
+    user_detected=$(whoami)
     local Sudo=
     case $uname_x in
         *WSL2*)
@@ -27,23 +29,22 @@ do_detect() {
         *codespaces*) DOTFILES_SYS=codespaces;;
         *MINGW64_NT*)
             DOTFILES_SYS=gitbash
-            user_detected=$( basename ${HOME} )
+            user_detected=$( basename "${HOME}" )
             ;;
         *)
-            grep -q code-server-init /proc/1/cmdline &>/dev/null && {
+            if grep -q code-server-init /proc/1/cmdline &>/dev/null; then
                 DOTFILES_SYS=devxspaces
-                # [[ "${HOME}" != /root ]] && {
-                #     CodeOpts="--user-data-dir=/root/.config/code-server --no-sandbox"
-                # }
-            } || {
+            else
                 DOTFILES_SYS=unknown
-            }
+            fi
             ;;
     esac
     if ! touch /bin/root-write-test 2>/dev/null; then
-        which sudo &>/dev/null && {
+        if which sudo &>/dev/null ; then
             Sudo=sudo
-        } || :
+        else
+            :
+        fi
     fi
 
     ISDOCKER=false
@@ -72,11 +73,12 @@ do_detect() {
 
     # Is apt-get available?
     AptGetPath=$(PATH="/opt/bb/bin:$PATH" which apt-get 2>/dev/null | head -n 1)
-    [[ -n "$AptGetPath" ]] && {
+    if [[ -n "$AptGetPath" ]]; then
         PKGMGRS+=(apt-get)
-    } || :
+    else :; fi
 
     # Is choco available?
+    #shellcheck disable=SC2015
     choco --version &>/dev/null && {
         PKGMGRS+=(choco)
     } || :
@@ -106,17 +108,20 @@ do_detect() {
     ################
 
     cat <<-EOF
-    DOTFILES_SYS=$DOTFILES_SYS
-    PS4x='\033[0;33m+\$?(\${BASH_SOURCE}:\${LINENO}):\033[0m \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }'
-    Code="$(which code-server code false 2>/dev/null | head -n 1)"
-    CodeOpts="${CodeOpts}"
-    User=${user_detected}
-    ISBB=${ISBB}
-    ISDOCKER=${ISDOCKER}
-    Sudo=${Sudo}
+#!/bin/bash
+#shellcheck disable=SC2034
+#shellcheck disable=SC2016
+DOTFILES_SYS=$DOTFILES_SYS
+PS4x='\033[0;33m+\$?(\${BASH_SOURCE}:\${LINENO}):\033[0m \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }'
+Code="$(which code-server code false 2>/dev/null | head -n 1)"
+CodeOpts="${CodeOpts}"
+User=${user_detected}
+ISBB=${ISBB}
+ISDOCKER=${ISDOCKER}
+Sudo=${Sudo}
 EOF
 
-    printf "    PKG_MANAGERS='";
+    printf "PKG_MANAGERS='";
     [[ ${#PKGMGRS[@]} -gt 0 ]] && {
         printf '%s ' "${PKGMGRS[@]}"
     } || :
