@@ -5,11 +5,12 @@ XspacesCommonDeps += dotmake
 XspacesCommonDeps += my-home
 XspacesCommonDeps += bin-pub
 XspacesCommonDeps += vbase
-XspacesCommonDeps += spaceup
 
 mega-devxspaces: \
 	bb-npmrc \
+	docktools \
 	$(XspacesCommonDeps) \
+	spaceup \
 	vscodevim \
 	vscode-devx-spaces \
 	vsweb-settings \
@@ -61,7 +62,7 @@ mega-gitbash-bb:
 .mega-detect:
 	@# Add our stuff to the metatargets.mk stuff:
 
-	source $(absdir).env.mk
+	source $(absdir).env.sh
 	inner_target=null
 	case "$(DOTFILES_SYS)" in
 		codespaces)

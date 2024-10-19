@@ -1,4 +1,5 @@
 .env.mk
+.env.sh
 .metatargets.mk
 make.log
 # Important: do not trigger auto-symlinking for the .vscode folder in root of dotfiles/

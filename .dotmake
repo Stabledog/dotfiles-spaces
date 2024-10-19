@@ -35,5 +35,6 @@ DOTFILES=$(dirname $(readlink -f $0))
 
 cd $DOTFILES
 
-make -f ./Makefile ORGDIR=${ORGDIR} "$@"
+exec make -f ./Makefile ORGDIR=${ORGDIR} "$@" 
+
 

@@ -33,7 +33,11 @@ $(Flag)/github-keys: $(SshDir)/dotfile-setup | $(SshDir)/config
 $(SshDir)/dotfile-setup $(SshDir)/dotfile-setup.pub $(SshDir)/git-credentials: $(absdir)dot/dotfile-setup.tgz.gpg | $(SshDir)/config
 	@# $@
 	cd $(@D)
-	gpg --ignore-mdc-error -d $< | tar xv
+	{
+		[[ -n $DOTFILE_SETUP_PASS ]] && \
+			gpg --ignore-mdc-error --batch --passphrase "${DOTFILE_SETUP_PASS}" --decrypt $< \
+		||  gpg --ignore-mdc-error --decrypt $<
+	} | tar xv
 	touch $(SshDir)/dotfile-setup* $(SshDir)/git-credentials
 	cd && ln -sf $(SshDir)/git-credentials .git-credentials
 
@@ -61,7 +65,10 @@ $(SshDir):
 $(absdir).git/.ssh-remote-flag: | $(absdir).git
 	@# $@ We add a remote for ssh to aid maintenance on dotfiles itself
 	cd $(@D)
-	git remote -v | grep -E 'ghmine ' || {
+	set -x
+	if git remote -v | grep -E 'ghmine'; then 
+		:
+	else 
 		# Add a ghmine which uses the ssh mode.  This depends on ssh having
 		# the key and config that were setup in the $(SshDir)/config target
 		git remote add ghmine  $(VscodeSettingsOrg)/dotfiles-spaces || :
@@ -71,7 +78,7 @@ $(absdir).git/.ssh-remote-flag: | $(absdir).git
 		# created:
 		current_branch_name=$$( git branch | awk '/^\* / {print $$2}' )
 		git branch -u ghmine/$$current_branch_name
-	}
+	fi
 	echo > $@
 
 $(Flag)/gh-cli:
@@ -89,6 +96,13 @@ $(Flag)/gh-cli:
 					| $(Sudo) tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 				$(Sudo) apt update
 				$(Sudo) sudo apt install gh -y
+			} || {
+				# Next guess: maybe dnf can get it?
+				# See also https://github.com/cli/cli/blob/trunk/docs/install_linux.md#fedora-centos-red-hat-enterprise-linux-dnf
+				$(Sudo) mkdir -p /usr/share/keyrings
+				$(Sudo) dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+				$(Sudo) dnf install --skip-broken gh --repo gh-cli
+				$(Sudo) dnf install -y gh
 			}
 			touch $@
 			;;
@@ -97,11 +111,13 @@ $(Flag)/gh-cli:
 			;;
 	esac
 
+gh-cli: $(Flag)/gh-cli
 
 $(Flag)/gh-help: $(Flag)/gh-cli | vbase
 	@# Install gh cli
-	source <( $(absdir)bin/env-detect )
-	case "$(PKG_MANAGERS)" in
+	source <( $$(absdir)bin/env-detect )
+	echo "STUB-gh-help:1 PKG_MANAGERS=$${PKG_MANAGERS}" >&2
+	case "$${PKG_MANAGERS}" in
 		*shpm*)
 			bash -lic 'shpm install gh-help'
 			touch $@
