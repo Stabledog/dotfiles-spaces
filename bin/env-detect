@@ -107,7 +107,7 @@ do_detect() {
 
     cat <<-EOF
     DOTFILES_SYS=$DOTFILES_SYS
-    Code=$(which code-server code false 2>/dev/null | head -n 1)
+    Code="$(which code-server code false 2>/dev/null | head -n 1)"
     CodeOpts="${CodeOpts}"
     User=${user_detected}
     ISBB=${ISBB}
