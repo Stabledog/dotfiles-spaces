@@ -7,27 +7,28 @@ $(Flag)/vscode-repo: | $(VscodeUserDir)
 	@# Target $@
 	# clone or update the Roaming/Code/User dir from github
 	cd $(VscodeUserDir) || exit 21
-	[[ -d ./.git ]] && {
+	if [[ -d ./.git ]]; then
 		git pull
-	} || {
+	else
 		git clone $(VscodeSettingsOrg)/vscode.settings ~/tmp$$$$
 		mv ~/tmp$$$$/.git ./
 		git remote add ghmine $(GhPubOrg)/vscode.settings.git
 		git checkout .
 		rm -rf ~/tmp$$$$
-	}
+	fi
+	echo "$$PWD 1" >> $(VHOME)/.tox-index
 	# Let's do ./snippets also:
 	mkdir -p ./snippets
 	cd ./snippets
-	[[ -d ./.git ]] && {
+	if [[ -d ./.git ]]; then
 		git pull
-	} || {
+	else
 		git clone $(VscodeSettingsOrg)/vscode.snippets tmp$$$$
 		mv tmp$$$$/.git ./
 		git remote add ghmine $(GhPubOrg)/vscode.snippets.git
 		git checkout .
 		rm -rf tmp$$$$
-	}
+	fi
 	echo "$$PWD 1" >> $(VHOME)/.tox-index
 
 	touch $@
