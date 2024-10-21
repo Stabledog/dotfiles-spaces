@@ -13,8 +13,8 @@ $(Flag)/vscode-repo: | $(VscodeUserDir)
 		git pull
 	else
 		git clone $(VscodeSettingsOrg)/vscode.settings ~/tmp$$$$
-		git config core.fileMode false
 		mv ~/tmp$$$$/.git ./
+		git config core.fileMode false
 		git remote add ghmine $(GhPubOrg)/vscode.settings.git
 		git checkout .
 		rm -rf ~/tmp$$$$
@@ -23,7 +23,7 @@ $(Flag)/vscode-repo: | $(VscodeUserDir)
 	# Let's do ./snippets also:
 	mkdir -p ./snippets
 	cd ./snippets
-	[[ -d ./.git ]] && {
+	if [[ -d ./.git ]]; then
 		git config core.fileMode false
 		git pull
 	else
