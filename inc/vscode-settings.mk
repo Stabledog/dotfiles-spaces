@@ -43,7 +43,7 @@ $(Flag)/vscode-devx-spaces: $(Flag)/vscode-repo
 	@ # After setting up the basic vscode settings working tree,
 	# we want to add our devx-spaces tweaks:
 	cd $(VscodeUserDir)
-	$(MAKE) -f profiles/devx-spaces/Makefile setup VscodeUserDir=$(VscodeUserDir)
+	#$(MAKE) -f profiles/devx-spaces/Makefile setup VscodeUserDir=$(VscodeUserDir)
 	touch $@
 
 $(Flag)/vscode-settings:  \
