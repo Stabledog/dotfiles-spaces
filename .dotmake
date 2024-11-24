@@ -28,12 +28,14 @@
 #   (See inc/app-setup.mk for more)
 #
 set -ue
-#set -x
+
 export ORGDIR=$PWD
 
 DOTFILES=$(dirname $(readlink -f $0))
 
 cd $DOTFILES
+
+[[ $# -eq 0 ]] && set -- mega
 
 exec make -f ./Makefile ORGDIR=${ORGDIR} "$@" 
 
