@@ -4,3 +4,5 @@
 make.log
 # Important: do not trigger auto-symlinking for the .vscode folder in root of dotfiles/
 ./.vscode  # Important: do not trigger auto-symlinking for this folder!
+dotfiles-upstream
+install.sh
