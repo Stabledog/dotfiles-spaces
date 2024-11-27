@@ -86,9 +86,6 @@ include $(shell ls inc/*.mk)
 	@# Add export decl to all config values:
 	$(MAKE) -f $(Makefile) Config | awk '/^[^#]+/ {print "export " $$0}'
 
-
-
-
 pull:
 	@cd $(absdir)
 	git pull
