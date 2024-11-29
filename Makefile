@@ -36,6 +36,8 @@ PS4=$(PS4x)
 # Folks who need to get in early before all parsing is done must define a pre-hook/*.mk script:
 include $(shell ls pre-hook/*.mk)
 
+VscodeExtInstall = $(absdir)bin/vscode-ext-install.sh
+
 GhPubOrg = https://github.com/Stabledog
 
 
