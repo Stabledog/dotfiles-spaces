@@ -71,7 +71,8 @@ $(Flag)/localhist-post: | $(HOME)/.localhistrc
 		*)
 	esac
 	[[ -n $$GH_URL ]] && {
-		bash -x $(absdir)/bin/localhist-post.sh --infer-hostname --gh-url $$GH_URL
+		bash -x $(absdir)/bin/localhist-post.sh --infer-hostname --gh-url $$GH_URL || \
+			echo "WARNING: $(absdir)/bin/localhist-post.sh failed" >&2
 	}
 	touch $@
 
