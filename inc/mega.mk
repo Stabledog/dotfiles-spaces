@@ -107,4 +107,4 @@ $(Flag)/mega: $(Finit)
 	echo "mega_target=$$mega_target"
 	$(MAKE) -f $(Makefile) $$mega_target
 	rm $$tmpfile
-	touch $@
+	#touch $@
