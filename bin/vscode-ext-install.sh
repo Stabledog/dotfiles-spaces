@@ -48,6 +48,7 @@ main() {
     declare -i failures=0
     source <(${scriptDir}/env-detect) # Initialize the Code variable
     touch ~/.vscode-ext-install.log
+    set -o pipefail
     {
 
         echo "Start: $(date -Iseconds): $*" 
@@ -63,7 +64,6 @@ main() {
             die "Failed to install ${failures} of $# extensions"
         fi
     } 2>&1 | tee -a ~/.vscode-ext-install.log
-    true
 }
 
 [[ -z ${sourceMe} ]] && {
