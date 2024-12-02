@@ -62,7 +62,7 @@ main() {
         if ((failures > 0)); then
             die "Failed to install ${failures} of $# extensions"
         fi
-    } 2>&1 | tee -a "~/.vscode-ext-install.log"
+    } 2>&1 | tee -a ~/.vscode-ext-install.log
     true
 }
 
