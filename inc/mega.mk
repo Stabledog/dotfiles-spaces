@@ -5,6 +5,7 @@ XspacesCommonDeps += dotmake
 XspacesCommonDeps += my-home
 XspacesCommonDeps += bin-pub
 XspacesCommonDeps += vbase
+XspacesCommonDeps += shellcheck
 
 mega-devxspaces: \
 	bb-npmrc \
