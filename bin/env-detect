@@ -10,7 +10,7 @@ set -ue
 CodeOpts=
 
 die() {
-    builtin echo "ERROR($(basename ${scriptName})): $*" >&2
+    builtin echo "ERROR($(basename "${scriptName}")): $*" >&2
     builtin exit 1
 }
 
@@ -84,19 +84,24 @@ do_detect() {
     } || :
 
     # Is yum available?
-    yum --version &>/dev/null && {
+    if yum --version &>/dev/null; then
         PKGMGRS+=(yum)
-    } || :
+    else :; 
+    fi
 
     # Is jumpstart available?
-    bash -ic 'jumpstart --version; exit' 2>/dev/null | grep -q version && {
+    set -o pipefail
+    #shellcheck disable=SC2073
+    if bash -ic 'jumpstart --version; exit' 2>/dev/null | grep -q version; then
         PKGMGRS+=(jumpstart)
-    } || :
+    else :; 
+    fi
 
     # Is shpm available?
-    bash -lic 'shpm --version; exit' 2>/dev/null | grep -Eq '[0-9]*\.[0-9]*\.' && {
+    if bash -lic 'shpm --version; exit' 2>/dev/null | grep -Eq '[0-9]*\.[0-9]*\.' ; then
         PKGMGRS+=(shpm)
-    } || :
+    else :; 
+    fi
 
 
 
@@ -122,9 +127,9 @@ Sudo=${Sudo}
 EOF
 
     printf "PKG_MANAGERS='";
-    [[ ${#PKGMGRS[@]} -gt 0 ]] && {
+    if [[ ${#PKGMGRS[@]} -gt 0 ]]; then
         printf '%s ' "${PKGMGRS[@]}"
-    } || :
+    else :; fi
     printf "'\n"
 }
 

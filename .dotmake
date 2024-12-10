@@ -31,12 +31,12 @@ set -ue
 
 export ORGDIR=$PWD
 
-DOTFILES=$(dirname $(readlink -f $0))
+DOTFILES=$(dirname "$(readlink -f $0)")
 
-cd $DOTFILES
+cd "$DOTFILES"
 
 [[ $# -eq 0 ]] && set -- mega
 
-exec make -f ./Makefile ORGDIR=${ORGDIR} "$@" 
+exec make -f ./Makefile ORGDIR="${ORGDIR}" "$@" 
 
 

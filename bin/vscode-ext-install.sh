@@ -26,13 +26,14 @@ scriptDir=$(command dirname -- "${scriptName}")
 
 
 die() {
-    builtin echo "ERROR($(basename ${scriptName})): $*" >&2
+    builtin echo "ERROR($(basename "${scriptName}")): $*" >&2
     builtin exit 1
 }
 
 install_ext() {
     local ext="$1"
     local output
+    #shellcheck disable=SC2154
     output="$("${Code}" --install-extension "${ext}" 2>&1)"
     echo "${output}"
     if [[ ${output} =~ "successfully installed" ]]; then
@@ -46,7 +47,8 @@ install_ext() {
 main() {
     [[ $# -eq 0 ]] && die "No extensions specified"
     declare -i failures=0
-    source <(${scriptDir}/env-detect) # Initialize the Code variable
+    #shellcheck disable=SC1090
+    source <("${scriptDir}/env-detect") # Initialize the Code variable
     touch ~/.vscode-ext-install.log
     set -o pipefail
     {

@@ -1,11 +1,6 @@
 #!/bin/bash
 # spaces-setup.sh for dotfiles-spaces
 
-initPrimary() {
-
-    # Identify the "spaces primary repo":
-    mapfile primaryCandidates < <(cd /; git ls -d /.git)
-}
 
 if [[ -z "$sourceMe" ]]; then
     for xfile in .inputrc .bashrc .vimrc; do
@@ -15,7 +10,7 @@ if [[ -z "$sourceMe" ]]; then
     [[ $# -gt 0 ]] && {
         case "$1" in
             --minimal|-m) echo "--minimal passed to setup.sh, so we're leaving early." >&2; exit;;
-            *) echo "WARNING: unknown argument(s) $@ passed to setup.sh" >&2;;
+            *) echo "WARNING: unknown argument(s) $* passed to setup.sh" >&2;;
         esac
     }
     # Install jumpstart fresh:

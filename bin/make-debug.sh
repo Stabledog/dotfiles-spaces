@@ -3,7 +3,6 @@
 # Launch make with debug options and capture output to /tmp/make.log
 
 scriptName="$(readlink -f "$0")"
-scriptDir=$(command dirname -- "${scriptName}")
 
 die() {
     builtin echo "ERROR($(basename ${scriptName})): $*" >&2

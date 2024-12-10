@@ -3,10 +3,9 @@
 # place where [a] we have write access [b] our shell init gets things like .bashrc [c] has a unix-y path, not a Windows mangle
 
 scriptName="$(readlink -f "$0")"
-scriptDir=$(command dirname -- "${scriptName}")
 
 die() {
-    builtin echo "ERROR($(basename ${scriptName})): $*" >&2
+    builtin echo "ERROR($(basename "${scriptName}")): $*" >&2
     builtin exit 1
 }
 
