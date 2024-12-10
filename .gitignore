@@ -6,3 +6,4 @@ make.log
 ./.vscode  # Important: do not trigger auto-symlinking for this folder!
 dotfiles-upstream
 install.sh
+README.md
