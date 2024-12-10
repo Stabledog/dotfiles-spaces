@@ -19,7 +19,9 @@ $(Flag)/shellcheck: /usr/local/bin/shellcheck
 	else
 		cd /tmp
 		ver=0.10.0
-		tar xf $(absdir)bin/shellcheck-v$${ver}.linux.x86_64.tar.xz
+		# Note: shellcheck does not distribute .tgz, we have to repack it
+		# so we're not dependent on `xz-utils`:
+		tar xf $(absdir)bin/shellcheck-v$${ver}.linux.x86_64.tgz
 		$(Sudo) cp shellcheck-v$${ver}/shellcheck /usr/local/bin
 	fi
 
