@@ -14,6 +14,7 @@ mega-devxspaces: \
 	spaceup \
 	vscodevim \
 	vscode-devx-spaces \
+	vscode-extensions-general \
 	vsweb-settings \
 	vsweb-colorthemes \
 	app-setup \
