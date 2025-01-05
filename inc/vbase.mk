@@ -40,7 +40,7 @@ $(Flag)/vbase-l1: $(Flag)/jumpstart | $(Finit)
 	touch $(Flag)/env-setup
 	touch $@
 
-$(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name $(Flag)/shpm-makeup
+$(Flag)/vbase-post: $(Flag)/localhist-post $(Flag)/git-fix-name $(Flag)/shpm-makeup $(Flag)/tig-setup
 	@touch $@
 
 $(Flag)/shpm-makeup:
