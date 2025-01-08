@@ -1,3 +1,4 @@
+#!/bin/bash
 # jumpstart.bashrc
 # vim: filetype=sh :
 #  WARNING: Don't change this file, as your changes will be
@@ -41,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=54
+JumpstartVersion=57
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -102,7 +103,7 @@ HISTFILESIZE=$HISTSIZE
 
 # Assuming 'dircolors' is available, define an alias for 'ls' which colorizes
 # directory listings:
-which dircolors &>/dev/null && { eval $(dircolors -b); alias ls='ls --color=auto'; }
+which dircolors &>/dev/null && { eval "$(dircolors -b)"; alias ls='ls --color=auto'; }
 
 # Check the window size after each command and update the values of lines
 # and COLUMNS:
@@ -118,11 +119,12 @@ alias lr='ls --color=auto -lrt' # Sort by reverse timestamp, long format
 # is handy if you have many terminals open, e.g. for one terminal you might
 # add the title "Code editing" and another might be "Compile + Test".
 function title {
-    printf '\E]2;%s\E\\' "$*"
+    printf '\E]2;%s\E'\\ "$*"
 }
 
 # Enable command completion (i.e. with the TAB key) for bash commands:
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    # shellcheck disable=SC1091
     source /etc/bash_completion
 fi
 
@@ -152,7 +154,7 @@ unalias rm cp mv  2>/dev/null
 function parse_host_suffix {
     # What sort of unix variant/flavor are we?
     #  (manually sync with shellkit/ps1-foo/parse_ps1_host_suffix.sh)
-    [[ -n $PS1_HOST_SUFFIX ]] && { echo $PS1_HOST_SUFFIX; return; }
+    [[ -n $PS1_HOST_SUFFIX ]] && { echo "$PS1_HOST_SUFFIX"; return; }
     [[ -n $PS1_SUPPRESS_HOST_SUFFIX ]] && return
     grep -sq code-server-init /proc/1/cmdline 2>/dev/null && { PS1_HOST_SUFFIX='Spaces'; echo "$PS1_HOST_SUFFIX"; return; }
     [[ -f /.dockerenv ]] && { PS1_HOST_SUFFIX='Docker'; echo $PS1_HOST_SUFFIX; return; }
@@ -176,7 +178,7 @@ function parse_host_suffix {
             ;;
     esac
     if which lsb_release &>/dev/null; then
-        if lsb_release -a 2>/dev/null | egrep -q 'RedHat'; then
+        if lsb_release -a 2>/dev/null | grep -Eq 'RedHat'; then
             PS1_HOST_SUFFIX='rhat'; echo $PS1_HOST_SUFFIX; return
         fi
     fi
@@ -189,7 +191,8 @@ parse_host_suffix &>/dev/null
 function parse_git_branch() {
     # Parse the current git branch name and print it
     which git &>/dev/null || return
-    local branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+    local branch
+    branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
     [[ -n $branch ]] && echo " [${branch}]"
 }
 
@@ -210,6 +213,7 @@ function set_PS1 {
         prevResultInd=$(printf "\[\033[01;31m\]""\xE2\x9C\x95""\[\033[;0m\]")
     fi
     PROMPT_DIRTRIM=3
+    #shellcheck disable=2154
     PS1="
 \[\e[1;33m\]\D{%b-%d %H:%M:%S}\[\e[0m\] \[\e[1;35m\]\w\[\e[0m\]$(parse_git_branch)
 \[\e[1;36m\][\u $PS1_HOST_SUFFIX \h]\[\e[0m\]${Ps1Tail}${prevResultInd}> "
@@ -239,8 +243,10 @@ esac
 JumpBaseHelpUrl=https://bbgithub.dev.bloomberg.com/sanekits/jumpstart.bashrc#readme
 
 __jmpstart_help_links() {
+    #shellcheck disable=SC2154
     local caption="Jumpstart (v${JumpstartVersion}):"
-    local unl=$( printf '=%.0s' $(seq 1 ${#caption}) )
+    local unl
+    unl=$( printf '=%.0s' $(seq 1 ${#caption}) )
 
     cat <<-EOF | fold -w 80
 $caption
@@ -250,6 +256,7 @@ $unl
     o  update:  Fetch and install latest version
     o  version: version + location
     o  -s, --scriptgen: print install command for clipboard copy
+    o  --vi: Enable vi keybindings in shell
 
 See also:
 ---------
@@ -263,6 +270,7 @@ EOF
 
 __jmpstart_scriptgen() {
     echo curl "-k" "--noproxy '*'" "https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \\"
+    # shellcheck disable=SC2016
     echo '-o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$; exec bash;'
 }
 
@@ -309,13 +317,15 @@ __jmpstart_prequal_shpm() {
         && return
     [[ -n "${JUMPSTART_FORCE_YES}" ]] || {
         echo "Component \"$1\" depends on bb-shellkit.  Would you like to add that first now?" >&2
-        read -n 1 -p "  Enter [y] to accept, anything else will cancel: "
+        read -rn 1 -p "  Enter [y] to accept, [i] to ignore. Anything else will cancel: "
         case "$REPLY" in
             y|Y|yes|YES) ;;
+            i|I) true; return ;;
             *) false; return ;;
         esac
     }
     __jmpstart_add_single bbshellkit || { false; return; }
+    # shellcheck disable=SC1090
     source ~/.bashrc
     true
 }
@@ -330,23 +340,23 @@ __jmpstart_add_single() {
             curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash - ;;
         cdpp)
             __jmpstart_prequal_shpm "cd++" && {
-                bash -lc '~/.local/bin/shpm install cdpp';
+                bash -lc '${HOME}/.local/bin/shpm install cdpp';
             };;
         bashics)
             __jmpstart_prequal_shpm "bashics" && {
-                bash -lc '~/.local/bin/shpm install bashics';
+                bash -lc '${HOME}/.local/bin/shpm install bashics';
             };;
         localhist)
             __jmpstart_prequal_shpm "localhist" && {
-                bash -lc '~/.local/bin/shpm install localhist';
+                bash -lc '${HOME}/.local/bin/shpm install localhist';
             };;
         gitsmart)
             __jmpstart_prequal_shpm "gitsmart" && {
-                bash -lc '~/.local/bin/shpm install gitsmart';
+                bash -lc '${HOME}/.local/bin/shpm install gitsmart';
             };;
         vbase)
             __jmpstart_prequal_shpm "vbase" && {
-                bash -lc '~/.local/bin/shpm install vbase';
+                bash -lc '${HOME}/.local/bin/shpm install vbase';
             };;
 
         *)
@@ -359,13 +369,14 @@ __jmpstart_add() {
     while [[ -n "$1" ]]; do
         __jmpstart_add_single "$1" || return;
         PATH="$(bash -lc 'echo $PATH' 2>/dev/null)"
+        # shellcheck disable=SC1090
         source ~/.bashrc 2>/dev/null
         shift
     done
 }
 
 __jmpstart_href_1_cmp_print() {
-    IFS=$'|\n' read kid kurl klabel kdesc kcmd <<< "$1"
+    IFS=$'|\n' read -r kid kurl klabel kdesc kcmd <<< "$1"
     echo "${klabel}:"
     echo "   o  $kdesc"
     [[ -n "$kurl" ]] && \
@@ -378,7 +389,7 @@ __jmpstart_href_1_cmp_print() {
 }
 
 __jmpstart_add_list() {
-    while IFS=$'| \n' read ctype kargs; do
+    while IFS=$'| \n' read -r ctype kargs; do
         case "$ctype" in
             href_1) __jmpstart_href_1_cmp_print "$kargs";;
             *) [[ -n ${ctype} ]] && echo "ERROR: unknown ctype=${ctype}" >&2 ;;
@@ -407,6 +418,7 @@ __jmpstart_main() {
             -l|list|--list) shift; __jmpstart_add_list "$@" ; return;;
             -a|add|--add) shift; __jmpstart_add "$@"; return ;;
             --scriptgen|-s) shift; __jmpstart_scriptgen "$@"; return ;;
+            --vi) shift; vi_mode_on; return ;;
             -v|--version|version) shift; __jmpstart_verinfo ; return ;;
             *)  __jmpstart_help_links; echo "ERROR: unknown argument: $1"; false; return;;
         esac
@@ -458,6 +470,7 @@ _cdview() {
 
 _cdselect() {
     select xdir in $(_cdview -k); do
+        # shellcheck disable=SC2164
         builtin cd "$xdir"
         return
     done
@@ -472,3 +485,38 @@ alias .4='builtin pushd ../../../.. &>/dev/null'
 alias .5='builtin pushd ../../../../.. &>/dev/null'
 alias .6='builtin pushd ../../../../../.. &>/dev/null'
 
+
+vi_mode_on() {
+    # Vi users typically want vi keybindings in their shell, and this sets that
+    # up in ~/.bashrc and ~/.inputrc
+    cat <<-"EOF" > ~/.inputrc-$$
+    set editing-mode vi
+    set bell-style none
+    set expand-tilde off
+    set show-mode-in-prompt on
+    set vi-ins-mode-string \1\e[;32m\2I:\1\e[;0m\2
+    set vi-cmd-mode-string \1\e[;31m\2C:\1\e[;0m\2
+    set colored-stats on
+    set mark-symlinked-directories on
+    set colored-completion-prefix on
+    set show-all-if-ambiguous on
+    set visible-stats on
+    set match-hidden-files on
+    $if mode=vi
+        set keymap vi-command
+        "s": nop
+        set keymap vi-insert
+        "jk": vi-movement-mode
+        "\e.": yank-last-arg    
+    $endif
+EOF
+    [[ -f ~/.inputrc ]] && cat ~/.inputrc >> ~/.inputrc-bak$$
+    cat ~/.inputrc-$$ > ~/.inputrc
+
+    echo "${HOME}/.inputrc updated"
+    grep -Eq '^set -o vi' ~/.bashrc || {
+        echo "set -o vi" >> ~/.bashrc
+        echo "${HOME}/.bashrc updated"
+        exec bash
+    }
+}
