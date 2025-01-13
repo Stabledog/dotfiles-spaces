@@ -42,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=57
+JumpstartVersion=58
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -221,6 +221,13 @@ function set_PS1 {
 }
 
 set_PS1  # Set the prompt to something more useful than the default
+
+function set_PS4() {
+    # When you use 'set -x' to enable diagnostics, it is much nicer to get source+line+function info:
+    PS4='+$?( $( set +u; [[ -z "$BASH_SOURCE" ]] || realpath "${BASH_SOURCE[0]}"):${LINENO} ): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+}
+
+set_PS4 
 
 case "$PROMPT_COMMAND" in
     set_PS1*) : ;;  # We already hooked in?
