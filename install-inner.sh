@@ -62,13 +62,14 @@ repo_parser_match() {
     local space_repo="$1"
     local space_branch="$2"
     local elem="$3"
-    # Extract pattern and targets by splitting on '='
-    read -r pattern targets < <( echo "$elem" | tr '=' ' ' )
+    local pattern repo_match branch_match
+    # Extract pattern from targets by splitting on '='
+    pattern="${elem//=*/}" 
     # Extract pattern reponame and branch:
-    read -r pat_repo pat_branch < <( echo "$pattern" | tr '/' ' ' )
+    read -r pat_repo pat_branch < <( echo "${pattern//\// }" )
     [[ -n "$pat_repo" ]] || return 2
     [[ -n "$pat_branch" ]] || pat_branch='*'
-    local repo_match=false branch_match=false
+    repo_match=false branch_match=false
 
     # Repo test:
     if [[  "${pat_repo}" == "*" ]]; then repo_match=true ; else :; fi
