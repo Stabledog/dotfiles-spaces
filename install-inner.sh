@@ -87,21 +87,21 @@ resolve_make_targets() {
     # 1.  We need the current repo name and branch of the working tree
     # 2.  For each matching element, test the name/branch pattern
     # 3.  If it matches, add the target names to our growing list
+    local targets=()
     local repo branch
     repo="$(get_repo_name "${SPACES__WORKAREA}")"
     branch="$(get_branch_name "${SPACES__WORKAREA}")"
     while read -r repo_def; do
         if repo_parser_match "$repo" "$branch" "$repo_def"; then
-            echo -n " ${repo_def//*=/}"
+            targets+="$( echo -n " ${repo_def//*=/}" )"
         fi
     done < <(get_elems_by_parser "repo")
-    
+    echo "${targets[@]}"
 }
 
 main() {
     PS4='\033[0;33m+$?( $( set +u; [[ -z "$BASH_SOURCE" ]] || realpath "${BASH_SOURCE[0]}"):${LINENO} ):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
     set -ue
-    set -x
     makeTargets="$(resolve_make_targets "$@")"
     if [[ -n "$makeTargets" ]]; then
         # shellcheck disable=SC2086 
