@@ -93,20 +93,28 @@ resolve_make_targets() {
     branch="$(get_branch_name "${SPACES__WORKAREA}")"
     while read -r repo_def; do
         if repo_parser_match "$repo" "$branch" "$repo_def"; then
+            # shellcheck disable=SC2179
             targets+="$( echo -n " ${repo_def//*=/}" )"
         fi
     done < <(get_elems_by_parser "repo")
-    echo "${targets[@]}"
+    echo "${targets[@]}" | awk '{$1=$1; print}'  # (Remove leading/trailing space)
 }
 
 main() {
     PS4='\033[0;33m+$?( $( set +u; [[ -z "$BASH_SOURCE" ]] || realpath "${BASH_SOURCE[0]}"):${LINENO} ):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
     set -ue
     makeTargets="$(resolve_make_targets "$@")"
-    if [[ -n "$makeTargets" ]]; then
+    {
+        echo "dotmake target resolution completed: making [$makeTargets]" 
+        echo "    (dotmake_opts=[${dotmake_opts}]) " 
+        env | awk '/^SPACE/ {print "    " $0}'
+        echo "    git branch: $(cd "${SPACES__WORKAREA}" && git branch | awk '/\*/ {print $2}' )"
+    } >&2
+    if [[ -n "${makeTargets}" ]]; then
         # shellcheck disable=SC2086 
         make $makeTargets
     else
+        echo "   No dotmake_opts rule matched, so default target selected: mega" >&2
         make mega
     fi
 }
