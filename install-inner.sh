@@ -17,10 +17,8 @@
 #            the jumpstart and bashics targets to be installed.
 #        - Both 'repo' and 'branch' can be '*' to match all.
 
-#DotmakeElems=()
 
 scriptName="$(readlink -f "$0")"
-#scriptDir=$(command dirname -- "${scriptName}")
 
 die() {
     builtin echo "ERROR($(basename "${scriptName}")): $*" >&2
@@ -108,8 +106,11 @@ main() {
         echo "dotmake target resolution completed: making [$makeTargets]" 
         echo "    (dotmake_opts=[${dotmake_opts}]) " 
         env | awk '/^SPACE/ {print "    " $0}'
-        echo "    git branch: $(cd "${SPACES__WORKAREA}" && git branch | awk '/\*/ {print $2}' )"
+        [[ -n $SPACES__WORKAREA ]] && {
+            echo "    git branch: $(cd "${SPACES__WORKAREA}" && git branch | awk '/\*/ {print $2}' )"
+        }
     } >&2
+
     if [[ -n "${makeTargets}" ]]; then
         # shellcheck disable=SC2086 
         make $makeTargets
