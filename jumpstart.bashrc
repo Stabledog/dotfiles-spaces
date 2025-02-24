@@ -42,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=58
+JumpstartVersion=60
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -50,10 +50,6 @@ JumpstartVersion=58
 [[ $- == *i* ]] \
     || return
 
-
-# Attention vim users:  un-comment the next statement when you want to switch
-# the readline key map to `vi` mode instead of the default:
-# set -o vi
 
 umask 0022  # Turn off write permissions for group+others when creating new files
 set -o ignoreeof  # Don't close the shell if we accidentally hit Ctrl+D
@@ -258,12 +254,17 @@ __jmpstart_help_links() {
     cat <<-EOF | fold -w 80
 $caption
 $unl
-    o  list: List available components
+    o  install:    Install to docker container or ssh host
+        - jumpstart install docker my-container-name
+            Install in running docker container by name or ID
+        - jumpstart install ssh [user@]my-remote-server-name
+            Install in remote ssh host
+    o  update:     Self-update to latest version
     o  add [component ...]: Add component(s)
-    o  update:  Fetch and install latest version
-    o  version: version + location
-    o  -s, --scriptgen: print install command for clipboard copy
-    o  --vi: Enable vi keybindings in shell
+    o  list:       List available components
+    o  version:    version + location
+    o  -s:         print install command for clipboard copy
+    o  --vi:       Enable vi keybindings in bash
 
 See also:
 ---------
@@ -286,7 +287,30 @@ __jmpstart_bootstrapper_url() {
 }
 
 __jmpstart_self_install() {
-    cat <<-EOF
+    local insmode="$1"  # Must be 'update' or 'install'
+    shift
+
+    if [[ "$insmode" == install ]]; then
+        [[ -n $1 ]] && {
+            case "$1" in
+                docker)
+                    __jmpstart_docker_clone "$2"
+                    return
+                    ;;
+                ssh)
+                    __jmpstart_ssh_clone "$2"
+                    return
+                    ;;
+                *)
+                    echo "ERROR: unknown arg(s) to install [$*]" >&2
+                    return 1
+                    ;;
+            esac
+        } || :
+    fi
+
+    # Fallthrough if we have eliminated docker and ssh as targets:
+    bash - <<-EOF
     which curl &>/dev/null && {
         http_proxy= https_proxy= curl -k -s -L $(__jmpstart_bootstrapper_url) -o ~/tmp-__jmpstart-\$\$.sh
         [[ \$? -eq -0 ]] || {
@@ -299,10 +323,12 @@ __jmpstart_self_install() {
         exit 0
     }
     # fail-handling:
-    echo "No curl on the PATH.  You should install 'curl' or manually download and run this instead: " >&2
-    $(__jmpstart_bootstrapper_url)
+    echo "ERROR: No curl on the PATH.  You should install 'curl' or manually download and run this script: " >&2
+    echo $(__jmpstart_bootstrapper_url)
     exit 21
 EOF
+    # shellcheck disable=SC2181 # yes we want $? test here.
+    [[ $? -eq 0 ]] || return 1
 }
 
 __jmpstart_component_table() {
@@ -408,29 +434,50 @@ __jmpstart_add_list() {
 __jmpstart_verinfo() {
     cat <<-EOF
 version=$JumpstartVersion
-location=${BASH_SOURCE[0]}
+location=$(realpath "${BASH_SOURCE[0]}")
 url=${JumpBaseHelpUrl}
 EOF
 }
 
 __jmpstart_main() {
     [[ $# -eq 0 ]] && { __jmpstart_help_links; return; }
-    while true; do
-        case "$1" in
-            -h|--help) shift; __jmpstart_help_links "$@" ; return;;
-            -u|update|--update|install|--install)
-                shift;
-                __jmpstart_self_install "$@" | bash - || return;
-                exec bash;;
-            -l|list|--list) shift; __jmpstart_add_list "$@" ; return;;
-            -a|add|--add) shift; __jmpstart_add "$@"; return ;;
-            --scriptgen|-s) shift; __jmpstart_scriptgen "$@"; return ;;
-            --vi) shift; vi_mode_on; return ;;
-            -v|--version|version) shift; __jmpstart_verinfo ; return ;;
-            *)  __jmpstart_help_links; echo "ERROR: unknown argument: $1"; false; return;;
-        esac
-        shift
-    done
+    case "$1" in
+        -h|--help) shift; __jmpstart_help_links "$@" ; return;;
+        -u|update|--update|install|--install)
+            local insmode="${1//--/}"
+            shift;
+            __jmpstart_self_install "$insmode" "$@" ; return ;;
+        -l|list|--list) shift; __jmpstart_add_list "$@" ; return;;
+        -a|add|--add) shift; __jmpstart_add "$@"; return ;;
+        --scriptgen|-s) shift; __jmpstart_scriptgen "$@"; return ;;
+        --vi) shift; vi_mode_on; return ;;
+        -v|--version|version) shift; __jmpstart_verinfo ; return ;;
+        *)  __jmpstart_help_links; echo "ERROR: unknown argument: $1"; false; return;;
+    esac
+}
+
+__jmpstart_get_canon_localpath() {
+    __jmpstart_verinfo | awk -F'=' '/^location=/ {print $2}'
+}
+
+__jmpstart_docker_clone() {
+    command which docker &>/dev/null || { echo "docker is not installed" >&2; return 1; }
+    command docker inspect -f '{{.State.Running}}' "$1" &>/dev/null \
+        || { echo "Container $1 not found" >&2; return 1; }
+    local srcPath x_cid="$1"    # Container name or ID
+    srcPath="$(__jmpstart_get_canon_localpath)"
+    (
+        set -ue
+        command docker cp "${srcPath}" "${x_cid}:/" >/dev/null
+        echo "Copied host:${srcPath} to ${x_cid}:/jumpstart.bashrc"
+        command docker exec -i -e "x_cid=${x_cid}" "${x_cid}" bash <<'EOF'
+            set -ue
+            grep -qE '^source [^#]*jumpstart\.bashrc' ${HOME}/.bashrc 2>/dev/null && { echo "Jumpstart is already sourced in ${x_cid}:~/.bashrc"; exit 0; } || :
+            echo 'source /jumpstart.bashrc # added by __jmpstart_docker_clone ' >> ${HOME}/.bashrc
+            echo "/jumpstart.bashrc added to ${HOME}/.bashrc in container ${x_cid}.  If you have existing shells open on this container you must do 'exec bash' to refresh them."
+EOF
+    ) || { echo "ERROR: failed install to ${x_cid}"; return 1; }
+    
 }
 
 alias jumpstart=__jmpstart_main
