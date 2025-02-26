@@ -42,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=60
+JumpstartVersion=66
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -232,10 +232,98 @@ case "$PROMPT_COMMAND" in
 esac
 
 
+# cdx is an alternative to 'cd' which maintains a cache of recently used
+# directories, presenting them as a selectable list if the user provides no args.
+cdx ()
+{
+    [[ $# == 0 ]] && {
+        _cdselect
+        return
+    };
+    case "$@" in
+        -h|--help)
+            builtin help cd
+            echo "cdx: [dir]"
+            echo "  Present selection of cached dirs for dir change"
+            echo "  [dir]: change to dir and add it to cache"
+            return ;;
+    esac
+    _cdview -k | command grep -Eq "^${PWD}\$" || {
+        builtin pushd -n "$PWD" > /dev/null
+    }
+    builtin cd "$@" || return
+    _cdview -k | command grep -Eq "^${PWD}\$" || {
+        builtin pushd -n "$PWD" > /dev/null
+    }
+    true
+}
+
+[[ $(type -t _cd) == function ]] && {
+    complete -o nospace -F _cd cdx
+}
+
+_cdview() {
+    builtin printf "%s\n" "${DIRSTACK[@]}" | (
+        case $1 in
+            -u) cat | command sort -u ;;
+            -k) cat |  command tail -n +2 | command sort -u ;;
+            *) cat
+        esac
+    )
+}
+
+_cdselect() {
+    select xdir in $(_cdview -k); do
+        # shellcheck disable=SC2164
+        builtin cd "$xdir"
+        return
+    done
+}
+
+# You can change to parent director(ies) with "cd ../../..", but typing
+# all of those dots is exactly the sort of meaningless work that you hate:
+alias .1='builtin cd ..'
+alias .2='builtin pushd ../.. &>/dev/null'
+alias .3='builtin pushd ../../.. &>/dev/null'
+alias .4='builtin pushd ../../../.. &>/dev/null'
+alias .5='builtin pushd ../../../../.. &>/dev/null'
+alias .6='builtin pushd ../../../../../.. &>/dev/null'
 
 
+vi_mode_on() {
+    # Vi users typically want vi keybindings in their shell, and this sets that
+    # up in ~/.bashrc and ~/.inputrc
+    cat <<-"EOF" > ~/.inputrc-$$
+    set editing-mode vi
+    set bell-style none
+    set expand-tilde off
+    set show-mode-in-prompt on
+    set vi-ins-mode-string \1\e[;32m\2I:\1\e[;0m\2
+    set vi-cmd-mode-string \1\e[;31m\2C:\1\e[;0m\2
+    set colored-stats on
+    set mark-symlinked-directories on
+    set colored-completion-prefix on
+    set show-all-if-ambiguous on
+    set visible-stats on
+    set match-hidden-files on
+    $if mode=vi
+        set keymap vi-command
+        "s": nop
+        set keymap vi-insert
+        "jk": vi-movement-mode
+        "\e.": yank-last-arg    
+    $endif
+EOF
+    [[ -f ~/.inputrc ]] && cat ~/.inputrc >> ~/.inputrc-bak$$
+    cat ~/.inputrc-$$ > ~/.inputrc
 
-
+    echo "${HOME}/.inputrc updated"
+    grep -Eq '^set -o vi' ~/.bashrc || {
+        echo "set -o vi" >> ~/.bashrc
+        echo "${HOME}/.bashrc updated"
+        exec bash
+    }
+}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -291,7 +379,7 @@ __jmpstart_self_install() {
     shift
 
     if [[ "$insmode" == install ]]; then
-        [[ -n $1 ]] && {
+        if [[ -n $1 ]]; then
             case "$1" in
                 docker)
                     __jmpstart_docker_clone "$2"
@@ -306,7 +394,7 @@ __jmpstart_self_install() {
                     return 1
                     ;;
             esac
-        } || :
+        fi
     fi
 
     # Fallthrough if we have eliminated docker and ssh as targets:
@@ -432,10 +520,15 @@ __jmpstart_add_list() {
 
 
 __jmpstart_verinfo() {
-    cat <<-EOF
-version=$JumpstartVersion
-location=$(realpath "${BASH_SOURCE[0]}")
-url=${JumpBaseHelpUrl}
+    local location
+    location=$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null)
+    if [[ -z "$location" ]]; then
+        location=$(awk '/^source .*jumpstart.bashrc/ {print $2}' ~/.bashrc 2>/dev/null | tr -d '"')
+    fi
+    sed 's/^[[:space:]]*//' <<EOF
+        version=$JumpstartVersion
+        location=$location
+        url=${JumpBaseHelpUrl}
 EOF
 }
 
@@ -460,11 +553,38 @@ __jmpstart_get_canon_localpath() {
     __jmpstart_verinfo | awk -F'=' '/^location=/ {print $2}'
 }
 
+
+__jmpstart_choose_docker_container() {
+    # List the running docker containers, numbering each one for user selection.
+    # Prompt the user for the selection, and print the selected container ID 
+    # All output to user should go thru stderr, because our stdout is for result.
+    mapfile -t containers < <( docker ps --format '{{.ID}} {{.Names}}' )
+    if [[ "${#containers[@]}" -eq 0 ]]; then
+        echo "No running docker containers found" >&2
+        return 1
+    fi
+
+    echo "Select a docker container:" >&2
+    select container in "${containers[@]}"; do
+        if [[ -n "$container" ]]; then
+            echo "$container" | awk '{print $1}'
+            return 0
+        else
+            echo "Invalid selection" >&2
+        fi
+    done
+}
+
 __jmpstart_docker_clone() {
     command which docker &>/dev/null || { echo "docker is not installed" >&2; return 1; }
-    command docker inspect -f '{{.State.Running}}' "$1" &>/dev/null \
-        || { echo "Container $1 not found" >&2; return 1; }
     local srcPath x_cid="$1"    # Container name or ID
+    if [[ -z "$x_cid" ]]; then
+        x_cid=$(__jmpstart_choose_docker_container)
+        [[ -z "$x_cid" ]] && return 1
+    else
+        command docker inspect -f '{{.State.Running}}' "$1" &>/dev/null \
+            || { echo "Container $1 not found" >&2; return 1; }
+    fi
     srcPath="$(__jmpstart_get_canon_localpath)"
     (
         set -ue
@@ -476,101 +596,27 @@ __jmpstart_docker_clone() {
             echo 'source /jumpstart.bashrc # added by __jmpstart_docker_clone ' >> ${HOME}/.bashrc
             echo "/jumpstart.bashrc added to ${HOME}/.bashrc in container ${x_cid}.  If you have existing shells open on this container you must do 'exec bash' to refresh them."
 EOF
-    ) || { echo "ERROR: failed install to ${x_cid}"; return 1; }
+    ) || { echo "ERROR: failed install to ${x_cid}" >&2; return 1; }
     
 }
 
+__jmpstart_ssh_clone() {
+    command which ssh &>/dev/null || { echo "Error: ssh is not installed" >&2; return 1; }
+    local srcpath x_server="$1"
+    [[ -z "$x_server" ]] && { echo "Error: no server name provided"; return 2; }
+    srcpath="$(__jmpstart_get_canon_localpath)"
+    (
+        set -ue
+        ssh "${x_server}" \
+            bash -c ' \
+            cat > ${HOME}/jumpstart.bashrc; \
+            set -ue; \
+            grep -Eq "^source .*jumpstart.bashrc" ${HOME}/.bashrc \
+                || echo source \"${HOME}/jumpstart.bashrc\" >> ${HOME}/.bashrc\
+            ' \
+            < "${srcpath}"
+    ) || { echo "ERROR: failed install to ${x_server}" >&2; return 3; }
+    echo "Install to ${x_server} succeeded. If you have shell(s) open on the remote host, run 'exec bash' to refresh them."
+}
+
 alias jumpstart=__jmpstart_main
-
-# cdx is an alternative to 'cd' which maintains a cache of recently used
-# directories, presenting them as a selectable list if the user provides no args.
-cdx ()
-{
-    [[ $# == 0 ]] && {
-        _cdselect
-        return
-    };
-    case "$@" in
-        -h|--help)
-            builtin help cd
-            echo "cdx: [dir]"
-            echo "  Present selection of cached dirs for dir change"
-            echo "  [dir]: change to dir and add it to cache"
-            return ;;
-    esac
-    _cdview -k | command grep -Eq "^${PWD}\$" || {
-        builtin pushd -n "$PWD" > /dev/null
-    }
-    builtin cd "$@" || return
-    _cdview -k | command grep -Eq "^${PWD}\$" || {
-        builtin pushd -n "$PWD" > /dev/null
-    }
-    true
-}
-
-[[ $(type -t _cd) == function ]] && {
-    complete -o nospace -F _cd cdx
-}
-
-_cdview() {
-    builtin printf "%s\n" "${DIRSTACK[@]}" | (
-        case $1 in
-            -u) cat | command sort -u ;;
-            -k) cat |  command tail -n +2 | command sort -u ;;
-            *) cat
-        esac
-    )
-}
-
-_cdselect() {
-    select xdir in $(_cdview -k); do
-        # shellcheck disable=SC2164
-        builtin cd "$xdir"
-        return
-    done
-}
-
-# You can change to parent director(ies) with "cd ../../..", but typing
-# all of those dots is exactly the sort of meaningless work that you hate:
-alias .1='builtin cd ..'
-alias .2='builtin pushd ../.. &>/dev/null'
-alias .3='builtin pushd ../../.. &>/dev/null'
-alias .4='builtin pushd ../../../.. &>/dev/null'
-alias .5='builtin pushd ../../../../.. &>/dev/null'
-alias .6='builtin pushd ../../../../../.. &>/dev/null'
-
-
-vi_mode_on() {
-    # Vi users typically want vi keybindings in their shell, and this sets that
-    # up in ~/.bashrc and ~/.inputrc
-    cat <<-"EOF" > ~/.inputrc-$$
-    set editing-mode vi
-    set bell-style none
-    set expand-tilde off
-    set show-mode-in-prompt on
-    set vi-ins-mode-string \1\e[;32m\2I:\1\e[;0m\2
-    set vi-cmd-mode-string \1\e[;31m\2C:\1\e[;0m\2
-    set colored-stats on
-    set mark-symlinked-directories on
-    set colored-completion-prefix on
-    set show-all-if-ambiguous on
-    set visible-stats on
-    set match-hidden-files on
-    $if mode=vi
-        set keymap vi-command
-        "s": nop
-        set keymap vi-insert
-        "jk": vi-movement-mode
-        "\e.": yank-last-arg    
-    $endif
-EOF
-    [[ -f ~/.inputrc ]] && cat ~/.inputrc >> ~/.inputrc-bak$$
-    cat ~/.inputrc-$$ > ~/.inputrc
-
-    echo "${HOME}/.inputrc updated"
-    grep -Eq '^set -o vi' ~/.bashrc || {
-        echo "set -o vi" >> ~/.bashrc
-        echo "${HOME}/.bashrc updated"
-        exec bash
-    }
-}
