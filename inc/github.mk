@@ -101,7 +101,7 @@ $(Flag)/gh-cli:
 				# See also https://github.com/cli/cli/blob/trunk/docs/install_linux.md#fedora-centos-red-hat-enterprise-linux-dnf
 				$(Sudo) mkdir -p /usr/share/keyrings
 				$(Sudo) dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-				$(Sudo) dnf install --skip-broken gh --repo gh-cli
+				$(Sudo) dnf install -y --skip-broken gh --repo gh-cli
 				$(Sudo) dnf install -y gh
 			}
 			touch $@
