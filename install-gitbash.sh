@@ -47,6 +47,13 @@ else
     echo "gitsmart already installed: OK"
 fi
 
+if ! makeup-version.sh &>/dev/null; then
+    curl -L https://github.com/sanekits/makeup/releases/download/0.2.0/makeup-setup-0.2.0.sh \
+    -o ~/tmp$$.sh && bash ~/tmp$$.sh && rm ~/tmp$$.sh
+else
+    echo "makeup already installed: OK"
+fi
+
 if [[ ! -e /bin/make ]]; then
     set -ue
     cd $TMPDIR
