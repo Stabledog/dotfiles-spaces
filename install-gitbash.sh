@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # install-gitbash.sh
 
 scriptName=$(basename -- "$(realpath -- "$0")")
@@ -45,4 +45,11 @@ if ! gitsmart-version.sh &>/dev/null; then
     bash ~/tmp$$.sh && rm ~/tmp$$.sh
 else
     echo "gitsmart already installed: OK"
+fi
+
+if [[ ! -e /bin/make ]]; then
+    set -ue
+    cd $TMPDIR
+    curl -LO https://raw.githubusercontent.com/sanekits/git-bash-patch/main/make-installer.sh
+    bash make-installer.sh
 fi
