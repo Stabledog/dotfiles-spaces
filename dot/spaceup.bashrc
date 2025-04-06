@@ -2,12 +2,19 @@
 
 code() {
     [[ -e $VSCODE_IPC_HOOK_CLI ]] && {
-        remoteCli=$(ls ${HOME}/.vscode-remote/bin/*/bin/remote-cli/code 2>/dev/null | head -n 1 )
-        [[ -x "${remoteCli}" ]] && {
-            "${remoteCli}" "$@"
+        local remoteCli_1=$(command ls ${HOME}/.vscode-remote/bin/*/bin/remote-cli/code 2>/dev/null | head -n 1 )
+        readonly remoteCli_1
+        [[ -x "${remoteCli_1}" ]] && {
+            "${remoteCli_1}" "$@"
             return
         }
-        which code-server &>/dev/null && {
+        local remoteCli_2="$(command which code 2>/dev/null)"
+        readonly remoteCli_2
+        if [[ "${remoteCli_2}" == *server/cli*code ]]; then
+            ${remoteCli_2} "$@"
+            return
+        fi
+        command which code-server &>/dev/null && {
             command code-server "$@"
             return
         }
