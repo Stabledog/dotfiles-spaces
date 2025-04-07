@@ -99,7 +99,8 @@ resolve_make_targets() {
 }
 
 main() {
-    PS4='\033[0;33m+$?( $( set +u; [[ -z "$BASH_SOURCE" ]] || realpath "${BASH_SOURCE[0]}"):${LINENO} ):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    #shellcheck disable=SC2154
+    PS4='\033[0;33m$(exec 2>/dev/null;set +u;bx="${BASH_SOURCE[0]}"; [[ -z "$bx" ]] || realpath -- "$bx" || echo "$bx"):${LINENO} +$? \033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}()| }'
     set -ue
     makeTargets="$(resolve_make_targets "$@")"
     {

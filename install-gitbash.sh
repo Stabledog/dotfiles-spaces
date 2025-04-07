@@ -3,7 +3,7 @@
 
 scriptName=$(basename -- "$(realpath -- "$0")")
 
-PS4="+$?( $( set +u; [[ -z "$BASH_SOURCE" ]] || realpath "${BASH_SOURCE[0]}"):${LINENO} ): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }"
+PS4='$( exec 2>/dev/null; set +u; bx="${BASH_SOURCE[0]}"; [[ -z "$bx" ]] || realpath -- "$bx" || echo "$bx"):${LINENO} +$? ${FUNCNAME[0]:+${FUNCNAME[0]}()| }'
 set -ue
 
 
