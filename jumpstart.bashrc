@@ -219,9 +219,10 @@ function set_PS1 {
 set_PS1  # Set the prompt to something more useful than the default
 
 function set_PS4() {
-    # When you use 'set -x' to enable diagnostics, it is much nicer to get source+line+function info:
+    # When you use 'bash -x <scriptname>' or 'set -x' to enable tracing, it is very helpful see source+line+function info
+    # in the trace output
     #shellcheck disable=SC2154
-    PS4='$( exec 2>/dev/null; set +u; bx="${BASH_SOURCE[0]}"; [[ -z "$bx" ]] || realpath -- "$bx" || echo "$bx"):${LINENO} +$? ${FUNCNAME[0]:+${FUNCNAME[0]}()| }'
+    PS4='$( _0=$?; exec 2>/dev/null; realpath -- "${BASH_SOURCE[0]:-?}:${LINENO} ^$_0 ${FUNCNAME[0]:-?}()=>" ) '
 }
 
 set_PS4 
