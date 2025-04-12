@@ -42,13 +42,17 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=66
+JumpstartVersion=69
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
 # to proceed even...
 [[ $- == *i* ]] \
     || return
+
+if [[ -n $JumpstartVersionInstalled ]] && [[ $JumpstartVersionInstalled -ge "$JumpstartVersion" ]]; then
+    return
+fi
 
 
 umask 0022  # Turn off write permissions for group+others when creating new files
@@ -219,9 +223,8 @@ function set_PS1 {
 set_PS1  # Set the prompt to something more useful than the default
 
 function set_PS4() {
-    # When you use 'bash -x <scriptname>' or 'set -x' to enable tracing, it is very helpful see source+line+function info
-    # in the trace output
-    #shellcheck disable=SC2154
+    # When you use 'set -x' to enable diagnostics, it is much nicer to get source+line+function info:
+    #shellcheck disable=2154
     PS4='$( _0=$?; exec 2>/dev/null; realpath -- "${BASH_SOURCE[0]:-?}:${LINENO} ^$_0 ${FUNCNAME[0]:-?}()=>" ) '
 }
 
@@ -622,3 +625,6 @@ __jmpstart_ssh_clone() {
 }
 
 alias jumpstart=__jmpstart_main
+
+# This should come last:
+JumpstartVersionInstalled=$JumpstartVersion
