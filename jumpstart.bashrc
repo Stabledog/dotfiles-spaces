@@ -42,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=69
+JumpstartVersion=70
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -295,6 +295,7 @@ alias .5='builtin pushd ../../../../.. &>/dev/null'
 alias .6='builtin pushd ../../../../../.. &>/dev/null'
 
 
+#shellcheck disable=2120
 vi_mode_on() {
     # Vi users typically want vi keybindings in their shell, and this sets that
     # up in ~/.bashrc and ~/.inputrc
@@ -326,7 +327,7 @@ EOF
     grep -Eq '^set -o vi' ~/.bashrc || {
         echo "set -o vi" >> ~/.bashrc
         echo "${HOME}/.bashrc updated"
-        exec bash
+        [[ "$*" == *noexec* ]] || exec bash
     }
 }
 
