@@ -42,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=71
+JumpstartVersion=72
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -196,6 +196,10 @@ function parse_git_branch() {
     [[ -n $branch ]] && echo " [${branch}]"
 }
 
+function parse_ps1_tail() {
+    echo "$Ps1Tail"
+}
+
 # The built-in PS1 variable defines the format of the user's shell
 # prompt. This version displays:
 #   - date/time (\D{})
@@ -216,7 +220,7 @@ function set_PS1 {
     #shellcheck disable=2154
     PS1="
 \[\e[1;33m\]\D{%b-%d %H:%M:%S}\[\e[0m\] \[\e[1;35m\]\w\[\e[0m\]$(parse_git_branch)
-\[\e[1;36m\][\u $PS1_HOST_SUFFIX \h]\[\e[0m\]${Ps1Tail}${prevResultInd}> "
+\[\e[1;36m\][\u $PS1_HOST_SUFFIX \h]\[\e[0m\]$(parse_ps1_tail)${prevResultInd}> "
     $prevResult;  # Important to reset the prevResult in case of chained prompt commands
 }
 
