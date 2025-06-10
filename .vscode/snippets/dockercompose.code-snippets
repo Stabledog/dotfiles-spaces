@@ -1,0 +1,51 @@
+{
+	// Place your snippets for dockercompose here. Each snippet is defined under a snippet name and has a prefix, body and
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+    "basicService": {
+        "description": "Define a basic service with common elements",
+        "scope": "compose",
+        "body": [
+            "version: \"3.7\"",
+            "services:",
+            "  serv1:",
+            "    build:",
+            "      context: .",
+            "      dockerfile: ./Dockerfile",
+            "      args: ",
+            "        - foo=bar",
+            "        - baz=bat",
+            "  # image: debian",
+            "  # image: artprod.dev.bloomberg.com:dpkg-python-development-base",
+            "    init: true",
+            "    command: sleep infinity",
+            "    volumes:",
+            "      - .:/workspace",
+            "      - \\${HOME}:/host_home",
+            ""
+        ]
+    },
+    "bbvpnProxyEnv":{
+        "description": "Defines the bbvpn proxy settings",
+        "scope": "compose",
+        "prefix":"bbproxy",
+        "body":[
+            "environment: ",
+            "  http_proxy: http://proxy.bloomberg.com:81",
+            "  https_proxy: http://proxy.bloomberg.com:81",
+            "  no_proxy: .bcs.bloomberg.com,.dev.bloomberg.com,10.0.0.0/8,100.0.0.0/8",
+            "  NODE_EXTRA_CA_CERTS: /etc/pki/ca-trust/source/anchors/bloomberg_rootca_v2.crt"
+        ]
+    }
+}

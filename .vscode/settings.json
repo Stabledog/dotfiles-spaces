@@ -1,0 +1,420 @@
+{
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format",
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features",
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+    },
+    "[python]": {
+        "editor.formatOnSave": false,
+        "editor.wordBasedSuggestions": "off",
+        "editor.defaultFormatter": "ms-python.black-formatter",
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+    },
+    "accessibility.dimUnfocused.enabled": true,
+    "accessibility.dimUnfocused.opacity": 0.75,
+    "accessibility.signals.terminalBell": {
+        "sound": "off"
+    },
+    "accessibility.signalOptions.volume": 0,
+    "bracketPairColorizer.depreciation-notice": false,
+    "breadcrumbs.enabled": true,
+    "C_Cpp.intelliSenseEngine": "default",
+    "CodeGPT.model": "gpt-4",
+    "cSpell.enabled": false,
+    "clangd.detectExtensionConflicts": false,
+    "cmake.configureOnOpen": false,
+    "cmake.showOptionsMovedNotification": false,
+
+    "csv-edit.initiallyIsInReadonlyMode": true,
+    "csv-edit.readOption_hasHeader": "true",
+    "debug.console.acceptSuggestionOnEnter": "off",
+    "debug.javascript.usePreview": false,
+    "debug.saveBeforeStart": "none",
+    "dev.containers.executeInWSL": true,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "docker.containers.description": [
+        "Status",
+    ],
+    "docker.containers.groupBy": "Compose Project Name",
+    "docker.containers.sortBy": "CreatedTime",
+    "docker.images.groupBy": "RepositoryNameAndTag",
+    "docker.volumes.groupBy": "None",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.accessibilitySupport": "off",
+    "editor.autoClosingBrackets": "never",
+    "editor.autoClosingQuotes": "never",
+    "editor.bracketPairColorization.enabled": true,
+    "editor.codeLens": false,
+    "editor.cursorStyle": "block",
+    "editor.detectIndentation": false,
+    "editor.dragAndDrop": false,
+    "editor.emptySelectionClipboard": false,
+    "editor.folding": false,
+    "editor.fontFamily": "Consolas",
+    "editor.guides.bracketPairs": true,
+    "editor.lineNumbers": "on",
+    "editor.minimap.enabled": false,
+    "editor.mouseWheelZoom": true,
+    "editor.multiCursorModifier": "alt",
+    "editor.parameterHints.enabled": false,
+    "editor.renderWhitespace": "all",
+    "editor.stickyScroll.enabled": true,
+    "editor.suggestSelection": "first",
+    "editor.tabSize": 4,
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 200,
+    "explorer.confirmDelete": false,
+    "explorer.confirmPasteNative": false,
+    "extensions.autoUpdate": false,
+    "extensions.ignoreRecommendations": true,
+    "files.associations": {
+        "*.jrnl": "markdown",
+        "*.prn": "tsv",
+        "*taskrc": "shellscript",
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": false,
+    "git-graph.commitDetailsView.location": "Docked to Bottom",
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.ignoreLegacyWarning": true,
+    "git.ignoreMissingGitWarning": true,
+    "git.openRepositoryInParentFolders": "never",
+    "github.copilot.chat.search.semanticTextResults": false,
+    "github.copilot.advanced": {
+        
+        "showInSearch": false,
+    },
+    "gitlens.graph.minimap.enabled": false,
+    "gitlens.graph.dimMergeCommits": true,
+    "gitlens.views.branches.branches.layout": "list",
+    "gitlens.remotes": [
+        {
+            "domain": "bbgithub.dev.bloomberg.com",
+            "type": "GitHub",
+        },
+    ],
+    "html.autoClosingTags": false,
+    "http.proxyStrictSSL": false,
+    "json.format.enable": true,
+    "json.format.trailingCommas": "none",
+    "jupyter.alwaysTrustNotebooks": true,
+    "jupyter.askForKernelRestart": false,
+    "jupyter.interactiveWindow.creationMode": "perFile",
+    "jupyter.interactiveWindow.textEditor.executeSelection": true,
+    "liveshare.anonymousGuestApproval": "reject",
+    "liveshare.connectionMode": "relay",
+    "liveshare.presence": false,
+    "logViewer.logLevel": "debug",
+    "materialTheme.accent": "Orange",
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left",
+    },
+    "notebook.lineNumbers": "on",
+    "php.validate.enable": false,
+    "prettier.tabWidth": 4,
+    "python.analysis.completeFunctionParens": false,
+    "python.autoComplete.addBrackets": false,
+    "python.jediEnabled": true,
+    "python.languageServer": "Jedi",
+    "rapid.cliRoot": "C:\\Users\\lmatheson4\\AppData\\Roaming\\npm\\node_modules\\rde-cli",
+    "rapid.typeGeneration.implementation": "@rapid/typescript-project",
+    "redhat.telemetry.enabled": false,
+    "remote.SSH.enableDynamicForwarding": false,
+    "remote.SSH.lockfilesInTmp": true,
+    "remote.SSH.path": "C:\\.ssh\\ssh-wsl.bat",
+    "remote.SSH.remotePlatform": {
+        "*.spaces": "linux",
+    },
+    "remote.SSH.showLoginTerminal": true,
+    "remote.WSL.debug": true,
+    "remote.extensionKind": {
+        "ms-azuretools.vscode-docker": "workspace",
+    },
+    "security.allowedUNCHosts": [
+        "wsl$",
+        "wsl.localhost",
+    ],
+    "security.workspace.trust.untrustedFiles": "open",
+    "settingsSync.enable": false,
+    "spaces.enableBergButton": true,
+    "spaces.commitReminder.enable": false,
+    "telemetry.telemetryLevel": "off",
+    "terminal.explorerKind": "external",
+    "terminal.external.linuxExec": "/bin/bash",
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.defaultProfile.windows": "git-bash",
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "terminal.integrated.enableVisualBell": false,
+    "terminal.integrated.env.windows": {
+        "CHERE_INVOKING": "1",
+    },
+    "terminal.integrated.localEchoEnabled": "on",
+    "terminal.integrated.localEchoStyle": "#C0C0C0",
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "color": "terminal.ansiGreen",
+            "path": "/bin/bash",
+            "icon": "terminal-debian"
+        },
+        "PowerShell": {
+            "path": "wsl.exe",
+            "args": [ "-e", "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe"],
+            "icon": "terminal-powershell",
+            "overrideName": true
+        },
+        "git-bash": {
+            "args": [
+                "--login",
+            ],
+            "path": "/mnt/c/Program Files/Git/bin/bash.exe",
+            "icon": "terminal-bash",
+            "overrideName": true
+        },
+        "sundev1": {
+            // How to open a VS Code integrated terminal on a sun machine:
+            "path": "/usr/bin/ssh",
+            "args": [
+                // Tell ssh that we want a pseudo-terminal for the shell we're starting:
+                "-t",
+                // Servername:
+                "sundev1",
+                // I like bash 4.4, so I built my own.  Not essential; /bin/bash or 
+                //      /opt/bb/bin/bash works for most folks. Or another shell if
+                //      you're inclined that way.
+                "/home/lmatheson4/mylibs/sun/bin/bash",
+                // We want an interactive login shell (i.e. run all the login scripts):
+                "-il"
+            ],
+            "name": "sundev1",
+            "overrideName": true,
+            "icon": "terminal-bash",
+            // Suppress the annoying popup when you exit the shell:
+            "terminal.integrated.confirmOnExit": false,
+        },
+        "sundev13": {
+            // How to open a VS Code integrated terminal on a sun machine:
+            "path": "/usr/bin/ssh",
+            "args": [
+                // Tell ssh that we want a pseudo-terminal for the shell we're starting:
+                "-t",
+                // Servername:
+                "sundev13",
+                // I like bash 4.4, so I built my own.  Not essential; /bin/bash or 
+                //      /opt/bb/bin/bash works for most folks. Or another shell if
+                //      you're inclined that way.
+                "/home/lmatheson4/mylibs/sun/bin/bash",
+                // We want an interactive login shell (i.e. run all the login scripts):
+                "-il"
+            ],
+            "icon": "terminal-bash",
+            "overrideName": true,
+            "name": "sundev13",
+            // Suppress the annoying popup when you exit the shell:
+            "terminal.integrated.confirmOnExit": false,
+        },
+        "traind-pw-679": {
+            // How to open a VS Code integrated terminal on a sun machine:
+            "path": "/usr/bin/ssh",
+            "args": [
+                // Tell ssh that we want a pseudo-terminal for the shell we're starting:
+                "-t",
+                // Servername:
+                "traind-pw-679",
+                // I like bash 4.4, so I built my own.  Not essential; /bin/bash or 
+                //      /opt/bb/bin/bash works for most folks. Or another shell if
+                //      you're inclined that way.
+                "/home/lmatheson4/mylibs/linux/bin/bash",
+                // We want an interactive login shell (i.e. run all the login scripts):
+                "-il"
+            ],
+            "name": "traind-pw-679",
+            "overrideName": true,
+            "icon": "terminal-bash",
+            // Suppress the annoying popup when you exit the shell:
+            "terminal.integrated.confirmOnExit": false,
+        },
+    },
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe",
+            ],
+            "args": [],
+            "icon": "terminal-cmd",
+        },
+        "WSL": {
+            "args": [
+                "-d",
+                "Ubuntu-20.04",
+                "--",
+                "bash",
+                "--login",
+                "-c",
+                "cd; bash;",
+            ],
+            "overrideName":true,
+            "path": "C:\\WINDOWS\\System32\\wsl.exe",
+            "icon": "terminal-debian"
+        },
+        "git-bash": {
+            "path": "C:\\Program Files\\git\\bin\\bash.exe",
+            "icon": "home",
+            "overrideName": true
+        },
+    },
+    "terminal.integrated.scrollback": 30000,
+    "terminal.integrated.shellIntegration.enabled": false,
+    "terminal.integrated.showExitAlert": false,
+    "terminal.integrated.smoothScrolling": true,
+    "terminal.integrated.tabs.enabled": true,
+    "typescript.autoClosingTags": false,
+    "vim.cursorStylePerMode.insert": "block-outline",
+    "vim.cursorStylePerMode.normal": "block",
+    "vim.easymotion": true,
+    "vim.handleKeys": {
+        "<C-d>": true,
+        "<C-w>": false,
+    },
+    "vim.hlsearch": true,
+    "vim.insertModeKeyBindings": [
+        {
+            "after": [
+                "<Esc>",
+            ],
+            "before": [
+                "j",
+                "k",
+            ],
+        },
+    ],
+    "vim.leader": ",",
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [
+                "s",
+            ],
+            "commands": [
+                ":w",
+            ],
+        },
+        {
+            "before": [
+                "<leader>",
+                "1",
+            ],
+            "commands": [
+                "editor.action.commentLine",
+            ],
+        },
+        {
+            "before": [
+                "<leader>",
+                "v",
+            ],
+            "commands": [
+                "open-in-vim.open",
+            ],
+        },
+        {
+            "before": [
+                "<leader>",
+                "n",
+            ],
+            "commands": [
+                "workbench.action.quickOpen",
+            ],
+        },
+        {
+            "before": [
+                "=",
+            ],
+            "commands": [
+                "workbench.action.tasks.build",
+            ],
+        },
+        {
+            "after": [
+                "g",
+                "j",
+            ],
+            "before": [
+                "j",
+            ],
+        },
+        {
+            "after": [
+                "g",
+                "k",
+            ],
+            "before": [
+                "k",
+            ],
+        },
+    ],
+    "vim.searchHighlightColor": "#ff7b00a1",
+    "vim.useSystemClipboard": true,
+    "vscode-neovim.neovimPath": "c:\\tools\\neovim\\Neovim\\bin\\nvim.exe",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "window.commandCenter": false,
+    "window.density.editorTabHeight": "compact",
+    "window.newWindowDimensions": "inherit",
+    "window.openFoldersInNewWindow": "off",
+    "window.openFilesInNewWindow": "off",
+    "window.restoreWindows": "none",
+    "window.zoomLevel": 2,
+    "wordcounter.count_chars": false,
+    "wordcounter.count_paragraphs": false,
+    "wordcounter.include_eol_chars": false,
+    "wordcounter.wpm": 110,
+    "workbench.colorTheme": "Catppuccin Macchiato",
+    "workbench.editor.decorations.colors": true,
+    "workbench.editor.enablePreview": true,
+    "workbench.editor.highlightModifiedTabs": false,
+    "workbench.editor.labelFormat": "short",
+    "workbench.editor.pinnedTabsOnSeparateRow": true,
+    "workbench.editor.pinnedTabSizing": "compact",
+    "workbench.editor.untitled.experimentalLanguageDetection": true,
+    "workbench.editor.wrapTabs": false,
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook",
+        "*.md": "default",
+    },
+    "workbench.fontAliasing": true,
+    "workbench.layoutControl.enabled": false,
+    "workbench.sideBar.location": "right",
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.tree.indent": 16,
+    "yaml.schemas": {
+        "https://schemaservice-dev.dx.bloomberg.com/schemas/devise.yaml": "devise.yaml",
+        "https://schemaservice-dev.dx.bloomberg.com/schemas/build.yaml": "build.yaml"
+    },
+    "zzzz--------------endmarker--------------------": 0,
+    "containers.containers.groupBy": "Compose Project Name",
+    "containers.containers.description": [
+        "Status"
+    ],
+    "containers.containers.sortBy": "CreatedTime",
+    "containers.images.groupBy": "RepositoryNameAndTag",
+    "containers.volumes.groupBy": "None",
+}

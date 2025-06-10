@@ -1,0 +1,87 @@
+{
+	// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+    "realpath extraction": {
+        "scope": "makefile",
+        "description": "Get the canonical dir for current Makefile",
+        "prefix": ["realpath","readlink","abspath"],
+        "body": [
+            "# See https://stackoverflow.com/a/73509979/237059",
+            "absdir := \\$(dir \\$(realpath \\$(lastword \\$(MAKEFILE_LIST))))",
+        ]
+    },
+    "common header": {
+        "scope": "makefile",
+        "description": "Insert common Makefile header",
+        "prefix": ["header","common"],
+        "body":[
+            "# Makefile for ${1}",
+            "SHELL=/bin/bash",
+            ".ONESHELL:",
+            ".SUFFIXES:",
+            ".SHELLFLAGS = -uec",
+            "MAKEFLAGS += --no-builtin-rules --no-print-directory",
+            "",
+            "#\tPS4=$(PS4x)  # <-- Copy/uncomment this in recipe to enable smart PS4 ",
+            "PS4x='$$( _0=$$?; exec 2>/dev/null; echo \"$(realpath $(lastword $(MAKEFILE_LIST)))|$@+\\$\\${LINENO} ^\\$\\$_0 $${FUNCNAME[0]:-?}()=>\" ) '",
+            "",
+            "absdir := \\$(dir \\$(realpath \\$(lastword \\$(MAKEFILE_LIST))))",
+            ""
+        ]
+    },
+    "phony targets declaration": {
+        "scope": "makefile",
+        "description": "Declare .PHONY target names",
+        "prefix": [".PHONY","phony"],
+        "body":[
+            ".PHONY: phony1 phony2"
+        ]
+    },
+    "define REMAKE": {
+        "description": "Adds a Remake def to recursively invoke make with current makefile",
+        "prefix": ["remake"],
+        "scope": "makefile",
+        "body": [
+            "Remake = make \\$(MAKEFLAGS) -f \\$(realpath \\$(lastword \\$(MAKEFILE_LIST)))",
+        ]
+    },
+
+    "PS4x": {
+        "description": "Recipe diagnostic helper ",
+        "prefix": ["ps4x","PS4x"],
+        "scope": "makefile",
+        "body": [
+            "#\tPS4=$(PS4x)  # <-- Copy/uncomment this in recipe to enable smart PS4 ",
+            "PS4x='$$( _0=$$?;_1=\"\\$(notdir \\$@)\";_2=\"$(realpath $(lastword $(MAKEFILE_LIST)))\"; exec 2>/dev/null; echo \"\\$\\${_2}|\\$\\${_1}@+\\$\\${LINENO} ^\\$\\$_0 $${FUNCNAME[0]:-?}()=>\" ) '"
+        ]
+    },
+    "xtarget create": {
+        "description": "Create simple target with debug support",
+        "prefix": ["target create","xtarget"], // Multiple prefixes may be defined
+        "scope": "makefile",
+        "body": [
+            "${1:<enter target name>}:",
+            "\t@# ${2:<Description>}",
+            "\tPS4=\\$(PS4x)",
+            "\t$0for vv in {a..c}; do",
+            "\t\techo \"\\$\\$vv\"",
+            "\tdone",
+            "",
+        ]
+    },
+}
+

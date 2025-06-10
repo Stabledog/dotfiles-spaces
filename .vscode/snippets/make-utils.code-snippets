@@ -1,0 +1,37 @@
+{
+    "make_makefile": {
+        "description": "Create generic makefile",
+        "prefix": ["_make_makefile"], // Multiple prefixes may be defined
+        "body": [
+            "# Makefile for ${1}",
+            "SHELL=/bin/bash",
+            ".ONESHELL:",
+            ".SUFFIXES:",
+            ".SHELLFLAGS = -uec",
+            "MAKEFLAGS += --no-builtin-rules --no-print-directory",
+            "",
+            "absdir := \\$(dir \\$(realpath \\$(lastword \\$(MAKEFILE_LIST))))",
+            "",
+            "Config: .cfg.cur",
+            "",
+            ".cfg.cur:",
+            "\t@# Configuration for current makefile",
+            "\tcat <<-EOF",
+            "\tabsdir=\\$(absdir)",
+            "\tEOF",
+            "",
+            "bash.here:",
+            "\t@# Launch a shell after building an environment based on our \"Config\" target",
+            "\tset -ue",
+            "\tenvfile=/tmp/env-bash-here.\\$\\$\\$\\$",
+            "\t{",
+            "\t\techo \"source \\$\\${HOME}/.bashrc\";",
+            "\t\t\\make -s Config",
+            "\t\techo \"Ps1Tail=bash.here\";",
+            "\t\techo \"export envfile=\\$\\$envfile\";",
+            "\t} > \\$\\$envfile",
+            "\tbash --rcfile \\$\\$envfile",
+            "",
+        ]
+    },
+}

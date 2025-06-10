@@ -1,0 +1,106 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Install jumpstart in shell environment",
+            "type": "shell",
+            "args": [
+                "-c",
+                "curl -k https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh -o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$ && echo -n Open a new terminal or run \"exec bash\" in an existing terminal to refresh the environment."
+            ],
+            "options": {},
+            "command": "bash",
+            "group": {
+                "kind": "none"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Copy jumpstart install command to clipboard",
+            "type": "shell",
+            "args": [
+                "-ic",
+                "for arg; do eval \"$arg\"; done",
+                "_", // Everything below is evaluated one line at a time in the host shell
+                "source ~/.bashrc",
+                "set -x",
+                "setPS4",
+                "Okmsg='Jumpstart install command copied to clipboard.'",
+                "command which code-server && { code-server -c < <( jumpstart -s ); echo \"$OKmsg\"; exit 0; } || :",
+                "jumpstart -s | xclip",
+                "echo \"$OKmsg\""
+            ],
+            "options": {},
+            "command": "bash",
+            "group": {
+                "kind": "none"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "My shell env setup",
+            "type": "shell",
+            "args": [
+                "-c",
+                "curl https://s3.dev.bcs.bloomberg.com/shellkit-data/bb-shellkit-bootstrap.sh | bash -; ${HOME}/.local/bin/shpm install vbase makeup;"
+            ],
+            "command": "/bin/bash",
+            "group": {
+                "kind": "none"
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Generic workspace-launch",
+            "type": "process",
+            "command": "/bin/bash",
+            "args": [
+                "-c",
+                "cd ${HOME}/dotfiles && ./install-inner.sh && echo Generic workspace launch completed"
+            ],
+            "options": {},
+            
+            "group": {
+                "kind": "none"
+            },
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}
