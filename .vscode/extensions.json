@@ -5,7 +5,7 @@
         "cnshenj.vscode-task-manager",
         "mads-hartmann.bash-ide-vscode",
         "rogalmic.bash-debug",
-        "timwong.shellcheck",
+        "timonwong.shellcheck",
         "vscodevim.vim",
     ]
 }
