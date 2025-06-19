@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ahmadawais.shades-of-purple",
+        "catppuccin.catppuccin-vsc-pack",
+        "cnshenj.vscode-task-manager",
+        "mads-hartmann.bash-ide-vscode",
+        "rogalmic.bash-debug",
+        "timwong.shellcheck",
+        "vscodevim.vim",
+    ]
+}

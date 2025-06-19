@@ -8,12 +8,6 @@
         "key": "ctrl+alt+q"
     },
     {
-        "command": "workbench.editor.closeEditor",
-        "when": "editorTextFocus",
-        "key":"ctrl+w"
-        
-    },
-    {
         "command": "workbench.action.terminal.resizePaneUp",
         "key": "ctrl+a ."
     },
@@ -386,5 +380,9 @@
     {
         "key": "ctrl+i t",
         "command": "github.copilot.terminal.explainTerminalSelection"
+    },
+    {
+        "key": "ctrl+alt+d",
+        "command": "spaces.sync-dotfiles"
     }
 ]
