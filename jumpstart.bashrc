@@ -42,7 +42,7 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=72
+JumpstartVersion=74
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -50,7 +50,7 @@ JumpstartVersion=72
 [[ $- == *i* ]] \
     || return
 
-if [[ -n $JumpstartVersionInstalled ]] && [[ $JumpstartVersionInstalled -ge "$JumpstartVersion" ]]; then
+if [[ -n $JumpstartVersionInstalled ]] && [[ $JumpstartVersionInstalled -ge "${JumpstartVersion:0}" ]]; then
     return
 fi
 
@@ -197,7 +197,7 @@ function parse_git_branch() {
 }
 
 function parse_ps1_tail() {
-    echo "$Ps1Tail"
+    echo "${Ps1Tail:-}"
 }
 
 # The built-in PS1 variable defines the format of the user's shell
@@ -334,6 +334,21 @@ EOF
         [[ "$*" == *noexec* ]] || exec bash
     }
 }
+
+init_mypath() {
+    # It's common to keep personal utilities in ~/bin and/or ~/.local/bin.  Here we add those to the PATH
+    # if they exist.
+    path_insert() {
+        local add="$1"
+        [[ ":${PATH}:" == *:${add}:*  ]] \
+            && return # if this is already on the PATH, bail out.
+        PATH="${add}:${PATH}"
+    }
+    [[ -d ~/.local/bin ]] && path_insert ~/.local/bin
+    [[ -d ~/bin ]] && path_insert ~/bin
+}
+
+init_mypath
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
