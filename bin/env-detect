@@ -117,8 +117,9 @@ do_detect() {
 #shellcheck disable=SC2034
 #shellcheck disable=SC2016
 DOTFILES_SYS=$DOTFILES_SYS
-PS4x='\033[0;33m+\$?(\${BASH_SOURCE}:\${LINENO}):\033[0m \${FUNCNAME[0]:+\${FUNCNAME[0]}(): }'
-Code="$(PATH="/opt/bb/bin/code-server/lib/vscode/bin/remote-cli:$PATH" which code-server code false 2>/dev/null | head -n 1)"
+PS4x='$( _0=$?; exec 2>/dev/null; realpath -- "${BASH_SOURCE[0]:-?}:${LINENO} ^$_0 ${FUNCNAME[0]:-?}()=>" ) '
+
+Code="$(which code | head -n 1)"
 CodeOpts="${CodeOpts}"
 User=${user_detected}
 ISBB=${ISBB}
