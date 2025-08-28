@@ -148,6 +148,7 @@
         "wsl$",
         "wsl.localhost",
     ],
+    "security.workspace.trust.enabled": false,
     "security.workspace.trust.untrustedFiles": "open",
     "settingsSync.enable": false,
     "spaces.enableBergButton": true,
