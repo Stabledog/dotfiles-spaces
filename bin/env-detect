@@ -5,6 +5,8 @@
 #  syntax or "source [filename]" in shell syntax, being just assignment statements.
 
 scriptName="$(readlink -f "$0")"
+#shellcheck disable=2154
+PS4='$( _0=$?; exec 2>/dev/null; realpath -- "${BASH_SOURCE[0]:-?}:${LINENO} ^$_0 ${FUNCNAME[0]:-?}()=>" ) '
 
 set -ue
 CodeOpts=
@@ -117,7 +119,7 @@ do_detect() {
 #shellcheck disable=SC2034
 #shellcheck disable=SC2016
 DOTFILES_SYS=$DOTFILES_SYS
-PS4x='$( _0=$?; exec 2>/dev/null; realpath -- "${BASH_SOURCE[0]:-?}:${LINENO} ^$_0 ${FUNCNAME[0]:-?}()=>" ) '
+PS4x='\$( _0=\$?; exec 2>/dev/null; realpath -- "\${BASH_SOURCE[0]:-?}:\${LINENO} ^\$_0 \${FUNCNAME[0]:-?}()=>" ) '
 
 Code="$(which code | head -n 1)"
 CodeOpts="${CodeOpts}"
