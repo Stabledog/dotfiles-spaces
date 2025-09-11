@@ -34,7 +34,7 @@ do_detect() {
             user_detected=$( basename "${HOME}" )
             ;;
         *)
-            if grep -q code-server-init /proc/1/cmdline &>/dev/null; then
+            if [[ "${SPACES__ENV:-}" == yes ]]; then
                 DOTFILES_SYS=devxspaces
             else
                 DOTFILES_SYS=unknown
