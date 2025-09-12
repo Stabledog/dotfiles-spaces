@@ -128,8 +128,6 @@
     "prettier.tabWidth": 4,
     "python.analysis.completeFunctionParens": false,
     "python.autoComplete.addBrackets": false,
-    "python.jediEnabled": true,
-    "python.languageServer": "Jedi",
     "rapid.cliRoot": "C:\\Users\\lmatheson4\\AppData\\Roaming\\npm\\node_modules\\rde-cli",
     "rapid.typeGeneration.implementation": "@rapid/typescript-project",
     "redhat.telemetry.enabled": false,
