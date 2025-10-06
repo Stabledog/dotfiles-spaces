@@ -9,6 +9,11 @@
 #  See https://bbgithub.dev.bloomberg.com/sanekits/jumpstart.bashrc/README.md for
 # instructions and help
 #
+#  Install 1-liner:
+#  -----------------
+# curl -k --noproxy '*' https://s3.dev.bcs.bloomberg.com/shellkit-data/jumpstart-setup-latest.sh \
+#  -o ~/jumpstart-$UID-$$ && bash ~/jumpstart-$UID-$$ && rm -f ~/jumpstart-$UID-$$ && exec bash
+#
 #  Recommended use:
 #  ----------------
 #    1.  Add a line to your ~/.bashrc which loads this file from your ~/dotfiles/ dir, i.e.:
@@ -42,7 +47,10 @@
 #    {FON: LES MATHESON<GO>}
 #
 
-JumpstartVersion=74
+# Normally you won't see the [replaced...] message below, because this file
+# gets processed before it's published.  But if you happen to have a raw
+# version in use, just set the JumpstartVersion to 1
+JumpstartVersion=75
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
