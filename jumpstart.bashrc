@@ -50,7 +50,7 @@
 # Normally you won't see the [replaced...] message below, because this file
 # gets processed before it's published.  But if you happen to have a raw
 # version in use, just set the JumpstartVersion to 1
-JumpstartVersion=75
+JumpstartVersion=80
 
 # Interactive-shell test: there's no point in doing the rest of this stuff
 # if the current shell is non-interactive, and it's potentially dangerous
@@ -69,13 +69,29 @@ set -o ignoreeof  # Don't close the shell if we accidentally hit Ctrl+D
 set +o noclobber  # We don't need Mom telling us about how redirection can
                   # overwrite a file
 
-# The "Locale" deals with language internationalization. Best to get that set
-# explicitly:
-LC_JUMPSTART=${LC_JUMPSTART:-en_US.UTF-8}
+# The "locale" controls how your shell displays characters, formats dates,
+# and sorts text. 
+#
+# To use a different locale (e.g., for local date/number formats),
+# set LC_JUMPSTART before sourcing this file:
+#   export LC_JUMPSTART=en_UK.utf8
+
+LC_JUMPSTART=${LC_JUMPSTART:-en_US.utf8}
+
+# Verify the locale is available before setting it
+if ! ( locale -a 2>/dev/null | grep -qi "^${LC_JUMPSTART}\$" ); then
+    cat >&2 <<EOF
+
+WARNING: Locale '${LC_JUMPSTART}' is not available on this system.
+This may cause display and character encoding issues.
+For guidance on fixing locale settings, see: https://bburl/jumpstart-bad-locale
+
+EOF
+fi
+
 export LC_ALL=$LC_JUMPSTART
 export LANG=$LC_JUMPSTART
 export LANGUAGE=$LC_JUMPSTART
-
 
 # - - - - - - - - - - - - - - Shell History  - - - - - - - - - - - - - - -
 
@@ -151,6 +167,11 @@ bind Space:magic-space
 # Expand dir names in the edit buffer for path completion:
 shopt -s direxpand 2>/dev/null || true
 
+# Enable recursive globbing with ** pattern (e.g., ls **/*.txt finds all .txt
+# files in current directory and all subdirectories). This is a powerful feature
+# for file operations, but be aware it can be slow on large directory trees:
+shopt -s globstar 2>/dev/null || true
+
 # Some system or user-default bashrc's like to create confirmation-forcing
 # aliases for 'rm', 'cp', etc.  We don't like this: rather than trying to
 # protect the user from normal file operations, it's better to develop
@@ -158,6 +179,18 @@ shopt -s direxpand 2>/dev/null || true
 # that needs uber-protection from mistakes -- i.e. everything important
 # should be in source control 99.93% of the time.
 unalias rm cp mv  2>/dev/null
+
+# Make 'less' more friendly for non-text files. If lesspipe or lesspipe.sh is
+# available, it will preprocess files (archives, PDFs, etc.) so they display
+# as readable text instead of binary garbage. For example, 'less foo.tar.gz'
+# will show the archive contents rather than compressed data:
+for lesshelper in lesspipe lesspipe.sh; do
+    if command -v "$lesshelper" &>/dev/null; then
+        eval "$(SHELL=/bin/sh $lesshelper)"
+        break
+    fi
+done
+unset lesshelper
 
 function parse_host_suffix {
     # What sort of unix variant/flavor are we?
