@@ -7,6 +7,10 @@ $(Flag)/vscode-repo: | $(VscodeUserDir)
 	@# Target $@
 	# clone or update the Roaming/Code/User dir from github
 	PS4=$(PS4)
+	[[ -n "$(VscodeUserDir)" ]] || {
+		echo "VscodeUserDir undefined, cannot init $(Flag)/vscode-repo" >&2
+		exit 
+	}
 	cd $(VscodeUserDir) || exit 21
 	if [[ -d ./.git ]]; then
 		git config core.fileMode false
