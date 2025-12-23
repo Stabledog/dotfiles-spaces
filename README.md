@@ -12,6 +12,23 @@
 
 >The lmatheson4/dotfile-bootstrap@main is a thin bootloader for the Stabledog/dotfiles-spaces@main
 
+## Shared content
+
+The two upstreams do share a bit of content:
+
+```
+README.md
+jumpstart.bashrc
+.vscode/*  # Inclues snippets, tasks.json, settings.json, etc
+```
+
+This is necessary because Spaces uses a "magic" VS Code settings propagation extension, and that content must be present in the origin upstream.  But it's also needed in ghmine for general use.
+
+This means there is manual maintenance such that when you change one of these shared files, it's important to do a diff afterward to ensure both upstreams have all changes, e.g.:
+```
+git diff origin/main ghmine/main -- $(git ls-tree -r --name-only ghmine/main | grep -Fx -f <(git ls-tree -r --name-only origin/main))
+```
+
 ## Maintenance
 
 The unusual branch architecture requires care when making changes.
