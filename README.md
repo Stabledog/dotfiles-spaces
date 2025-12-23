@@ -24,16 +24,25 @@ jumpstart.bashrc
 
 This is necessary because Spaces uses a "magic" VS Code settings propagation extension, and that content must be present in the origin upstream.  But it's also needed in ghmine for general use.
 
-This means there is manual maintenance such that when you change one of these shared files, it's important to do a diff afterward to ensure both upstreams have all changes, e.g.:
+This means there is manual maintenance such that when you change one of these shared files, it's important to commit changes to both upstreams , e.g.:
 ```
-git diff origin/main ghmine/main -- $(git ls-tree -r --name-only ghmine/main | grep -Fx -f <(git ls-tree -r --name-only origin/main))
+# After editing a shared file in the working copy, commit and push to one of the remotes:
+git add foo.txt
+git commit -m "Updated foo.txt" && git push origin HEAD:main
+
+# Checkout ghmine/main, then overlay changed files from origin/main
+./git-pseudo-merge ghmine/main origin/main
+
+#... reconcile, commit, and push.  Reverse the remotes and do it again if there are changes on both remotes.
+
+
 ```
 
-## Maintenance
+## Maintenance (non-shared files)
 
 The unusual branch architecture requires care when making changes.
 
-**Never do maintenance on a local `main` branch.**  *(Just don't ever create a local main branch)*
+**Never do maintenance on a local `main` branch.**  *(Tip: Just don't ever create a local main branch)*
 
 ### Changing ghmine/dotfiles-spaces@main
 
