@@ -82,7 +82,7 @@
             "command": "/bin/bash",
             "args": [
                 "-c",
-                "cd ${HOME}/dotfiles && echo ./install-inner.sh disabled && echo Generic workspace launch completed"
+                "cd ${HOME}/dotfiles && echo './install-inner.sh disabled in tasks.json' && echo 'Generic workspace launch completed'"
             ],
             "options": {},
             

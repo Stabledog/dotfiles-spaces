@@ -142,8 +142,7 @@
     "remote.extensionKind": {
         "ms-azuretools.vscode-docker": "workspace",
     },
-    {
-    "search.searchEditor.doubleClickBehavior" : "openLocationToSide",
+    "search.searchEditor.doubleClickBehavior": "openLocationToSide",
     "security.allowedUNCHosts": [
         "wsl$",
         "wsl.localhost",
