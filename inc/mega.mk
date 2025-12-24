@@ -6,7 +6,6 @@ XspacesCommonDeps += my-home
 XspacesCommonDeps += bin-pub
 XspacesCommonDeps += vbase
 XspacesCommonDeps += shellcheck
-XspacesCommonDeps += vscode-tools
 
 mega-devxspaces: \
 	bb-npmrc \
