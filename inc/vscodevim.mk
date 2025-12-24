@@ -7,5 +7,5 @@ $(Flag)/vscodevim: $(Finit)
 		echo "Unable to install vscode extensions: try again in a vscode terminal" >&2
 		exit 0
 	}
-	$(VscodeExtInstall) vscodevim.vim
+	$(VscodeExtInstall) vscodevim.vim || :
 	touch $@
