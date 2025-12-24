@@ -25,4 +25,12 @@ Config: .cfg-vscode
 	EOF
 
 
+vscode-tools: $(Flag)/vscode-tools
+$(Flag)/vscode-tools:  
+	@# Target $@
+	# Install vscode-tools shellkit
+	PS4=$(PS4)
+	shpm install vscode-tools
+	touch $@
+
 vscode.mk: ;
