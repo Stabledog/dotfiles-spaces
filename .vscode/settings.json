@@ -89,6 +89,7 @@
     "git-graph.commitDetailsView.location": "Docked to Bottom",
     "git.autofetch": true,
     "git.confirmSync": false,
+    "git.detectWorktrees": false,
     "git.ignoreLegacyWarning": true,
     "git.ignoreMissingGitWarning": true,
     "git.openRepositoryInParentFolders": "never",
